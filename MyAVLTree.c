@@ -47,11 +47,82 @@ AVLTree *newAVLTree()
 	return T;
 }
 
+// get the key and value from a pointer,returns two integers using splitting string based on specific delimiters
+int getKV(char *pointer){
+	int values[2];
+	// set up the delimiter to split the string
+	char deli2[] ='(,)';
+	char *p = strtok(&pointer,deli2);
+	while(p!=NULL){
+		//assign two intgers to the int array
+		values[0] = atoi(&p);
+		p++;
+		values[1] = atoi(&p);
+		p = strtok(NULL,deli2);
+	}
+	int *pint = values;
+	return pint;
+}
+
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename)
 {
- // put your code here
-  
+ // create an empty tree
+ AVLTree *tree;
+ char data_string[255];
+ if(strncmp(filename,"stdin",5)==0){
+	 // set up the delimiter to split the input string line by line
+	 char delimiter[] =" ";
+	 while (1){
+		 // assgin the input string to the data_string line by line
+		  gets(data_string);
+			// if it is a empty line, then the input is done, ending up reading from the standard input
+			if(strlen(data_string)==0){
+				break;
+			}
+			//take each item from the line one by one and insert them into the tree.
+			char *ptr = strtok(data_string,delimiter);
+			while (ptr!=NULL){
+				//get the key and value from the tuple
+				int *pts = getKV(ptr);
+				int key, value;
+				//assign key and value
+				key = &pts;
+				pts++;
+				value = &pts;
+				//insert the new item
+				InsertNode(tree,key,value);
+				//split the string from the next token's starting position it remembers
+				ptr = strok(NULL,delimiter);
+			}
+	 }
+ }else{
+		FILE *fp;
+		fp = fopen(filename,"r");
+		if (fp == NULL){
+			printf("Error occurs when opening file!");
+			return NULL;
+		}
+		//iteratively read tuples until the end of the file
+		while(1){
+			//reads string and stops when encounter white-space or new line
+			fscanf(fp,"%s",data_string);
+			//end of the file
+			if(feof(fp)){
+				break;
+			}
+			char *ptr = data_string;
+			//get the key and value from the tuple
+			int *pts = getKV(ptr);
+			int key, value;
+			//assign key and value
+			key = &pts;
+			pts++;
+			value = &pts;
+			//insert the new item
+			InsertNode(tree,key,value);
+		}
+	 }
 }
 
 // put your time complexity analysis for CloneAVLTree() here
@@ -76,6 +147,7 @@ AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 // put the time complexity analysis for InsertNode() here    
 int InsertNode(AVLTree *T, int k, int v)
 {
+	//have to apply rotation after each insertion.
 	//put your code here
 }
 
