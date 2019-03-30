@@ -159,12 +159,57 @@ bool isBalance(AVLTreeNode *newNode){
 	}
 }
 
+// increase height
+void increaseH(AVLTreeNode *N){
+	AVLTreeNode *current;
+	current = N;
+	while(current->parent!=NULL){
+		current->height++;
+		current = current->parent;
+	}
+}
+
+//rotation
+AVLTree *rotation(AVLTree *unbalancedT){
+	AVLTree *balancedT;
+	if(unbalancedT->size <= 1){
+		return unbalancedT;
+	}else{
+		return balancedT;
+	}
+}
+
 // put the time complexity analysis for InsertNode() here    
 int InsertNode(AVLTree *T, int k, int v)
 {
 	//have to apply rotation after each insertion.
 	//put your code here
 
+	//serach for the inserting position
+	AVLTreeNode *node;
+	AVLTreeNode *newNode;
+	AVLTree *balancedTree;
+	newNode->key = k;
+	newNode->value = v;
+	node = Search(T,k,v);
+	// insert new node
+	if (node == NULL){
+		T->root = newNode;
+	}else{
+		if(comparasion(node,k,v)>=0){
+			node->left = newNode;
+		}else{
+			node->right = newNode;
+		}
+		newNode->parent = node;
+		// increase all the parent's height by 1 after inserting a node
+		increaseH(node);
+	}
+	// increase the size of the tree
+	T->size++;
+	// do rotation
+	balancedTree = rotation(T);
+	return balancedTree;
 }
 
 // put your time complexity for DeleteNode() here
@@ -254,39 +299,36 @@ int comparasion(AVLTreeNode *node,int k, int v){
 // 		}
 // 	}
 // }
+
+// This function is just for search the specific node
 AVLTreeNode *Search(AVLTree *T, int k, int v)
 {
+	AVLTreeNode *Target;
   // put your code here
-	if(T->size == 0){
+	if(T->root == NULL){
 		// The tree is empty, so return NULL.
 		return NULL;
 	}else{
-		// return a node and a direction when it is not empty.
+		// return a node if it finds the item, otherwise, return NULL.
 		AVLTree *subtree;
-		if(comparasion(T->root,k,v)>=0){
+		if(comparasion(T->root,k,v) == 0){
+			return T->root;
+		}else if(comparasion(T->root,k,v) > 0){
 			if(T->root->left != NULL){
 				// make the left part as a subtree for recursion
+				// attention: the size of this subtree will always be 0, because we did not calculate it due to its uselessness here.
 				subtree->root = T->root->left;
-				// This step may make the complexity very high!!
-				// just leave it first, if the time complexity is too high 
-				// and cant figure out another way, then may be just ignore this variable.
-				// subtree->size = size(subtree->root->left);
-				Search(subtree, k,v);
-			}else{
-				return T->root;
+				Target = Search(subtree, k,v);
 			}
 		}else{
 			if(T->root->right != NULL){
 				// make the right part as a subtree for recursion
 				subtree->root = T->root->right;
-				// This step may make the complexity very high!!
-				// subtree->size = size(subtree->root->right);
-				Search(subtree, k,v);
-			}else{
-				return T->root;
+				Target = Search(subtree, k,v);
 			}
 		}
 	}
+	return Target;
 }
 // put your time complexity analysis for freeAVLTree() here
 void FreeAVLTree(AVLTree *T)
