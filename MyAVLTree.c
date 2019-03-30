@@ -179,6 +179,29 @@ AVLTree *rotation(AVLTree *unbalancedT){
 	}
 }
 
+// return NULL when it is an empty tree, otherwise, return the node being about to be the parent of the new node.
+AVLTreeNode *BS(AVLTreeNode *Root, int k, int v)
+{
+  // put your code here
+	AVLTreeNode *position;
+	if(Root == NULL){
+		// The tree is empty, so return the T itself.
+		return NULL;
+	}else if(comparasion(Root,k,v)>=0){
+		// return a node when it is not empty.
+		if (Root->left == NULL){
+			position = Root;
+		}
+		position = BS(Root->left, k,v);
+	}else{
+		if (Root->right == NULL){
+			position = Root;
+		}
+		position = BS(Root->right, k,v);
+	}
+	return position;
+}
+
 // put the time complexity analysis for InsertNode() here    
 int InsertNode(AVLTree *T, int k, int v)
 {
@@ -191,7 +214,7 @@ int InsertNode(AVLTree *T, int k, int v)
 	AVLTree *balancedTree;
 	newNode->key = k;
 	newNode->value = v;
-	node = Search(T,k,v);
+	node = BS(T,k,v);
 	// insert new node
 	if (node == NULL){
 		T->root = newNode;
@@ -246,60 +269,7 @@ int comparasion(AVLTreeNode *node,int k, int v){
 // 	}
 // }
 
-// // new struct for storing a tree node and a direction
-// typedef struct TreeDirection{
-// 	AVLTreeNode *node;
-// 	char *direction;
-// }TreeDirection;
-
-// // create a new TreeDirection
-// TreeDirection *TD(AVLTreeNode *TheNode, char *TheDirection){
-// 	TreeDirection *new;
-// 	new->node = TheNode;
-// 	new->direction = TheDirection;
-// 	return new;
-// }
-
 // put your time complexity analysis for Search() here
-// return the tree itself when it is an empty tree; return a node and a direction when it is not.
-// This function may occura potential problem: return data type is different from the function type.!!!
-// AVLTreeNode *Search(AVLTree *T, int k, int v)
-// {
-//   // put your code here
-// 	if(T->size == 0){
-// 		// The tree is empty, so return the T itself.
-// 		return T;
-// 	}else{
-// 		// return a node and a direction when it is not empty.
-// 		AVLTree *subtree;
-// 		if(comparasion(T->root,k,v)>=0){
-// 			if(T->root->left != NULL){
-// 				// make the left part as a subtree for recursion
-// 				subtree->root = T->root->left;
-// 				subtree->size = size(subtree->root->left);
-// 				Search(subtree, k,v);
-// 			}else{
-// 				TreeDirection *temp;
-// 				temp->node = T->root;
-// 				temp->direction = "left";
-// 				return temp;
-// 			}
-// 		}else{
-// 			if(T->root->right != NULL){
-// 				// make the right part as a subtree for recursion
-// 				subtree->root = T->root->right;
-// 				subtree->size = size(subtree->root->right);
-// 				Search(subtree, k,v);
-// 			}else{
-// 				TreeDirection *temp;
-// 				temp->node = T->root;
-// 				temp->direction = "right";
-// 				return temp;
-// 			}
-// 		}
-// 	}
-// }
-
 // This function is just for search the specific node
 AVLTreeNode *Search(AVLTree *T, int k, int v)
 {
