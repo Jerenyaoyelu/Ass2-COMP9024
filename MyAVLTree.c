@@ -57,7 +57,12 @@ int getKV(char *pointer){
 		//assign two intgers to the int array
 		values[0] = atoi(&p);
 		p++;
-		values[1] = atoi(&p);
+		if (p == NULL){
+			printf("Errors in input!");
+			exit(0);
+		}else{
+			values[1] = atoi(&p);
+		}
 		p = strtok(NULL,deli2);
 	}
 	int *pint = values;
@@ -149,6 +154,7 @@ int InsertNode(AVLTree *T, int k, int v)
 {
 	//have to apply rotation after each insertion.
 	//put your code here
+
 }
 
 // put your time complexity for DeleteNode() here
