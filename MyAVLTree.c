@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include<stdbool.h>
 
 // all the basic data structures and functions are included in this template
 // you can add your own auxiliary functions as you like 
@@ -149,6 +150,15 @@ AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 	 //put your code here
 }
 
+// check if the node is in balance
+bool isBalance(AVLTreeNode *newNode){
+	if((newNode->height - newNode->left->height) > 2 || (newNode->height - newNode->right->height) > 2){
+		return false;
+	}else{
+		return true;
+	}
+}
+
 // put the time complexity analysis for InsertNode() here    
 int InsertNode(AVLTree *T, int k, int v)
 {
@@ -163,10 +173,34 @@ int DeleteNode(AVLTree *T, int k, int v)
  // put your code here
 }
 
+// Compare two nodes
+int comparasion(AVLTreeNode *node,int k, int v){
+	if (node->key > k){
+		return 1;
+	}else if(node->key == k){
+		if(node->value > v){
+			return 1;
+		}else if(node->value == v){
+			return 0;
+		}else{
+			return -1;
+		}
+	}else{
+		return -1;
+	}
+}
+
 // put your time complexity analysis for Search() here
 AVLTreeNode *Search(AVLTree *T, int k, int v)
 {
   // put your code here
+	if(T->size == 0){
+		// The tree is empty, so return the T itself.
+		return T;
+	}else{
+		AVLTreeNode *current;
+		
+	}
 }
 
 // put your time complexity analysis for freeAVLTree() here
@@ -206,7 +240,7 @@ int main() //sample main for testing
    if (j==0) printf("(%d, %d) already exists\n", i, i);
   }
   PrintAVLTree(tree4);
-  node1=Search(tree4,20,20);
+  node1 = Search(tree4,20,20);
   if (node1!=NULL)
     printf("key= %d value= %d\n",node1->key,node1->value);
   else 
