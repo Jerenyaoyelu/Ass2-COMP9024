@@ -174,6 +174,8 @@ int DeleteNode(AVLTree *T, int k, int v)
 }
 
 // Compare two nodes
+// returns 1 when the about-to-insert node is smaller; 
+// returns 0 when they are equal; returns -1 when he about-to-insert node is bigger.
 int comparasion(AVLTreeNode *node,int k, int v){
 	if (node->key > k){
 		return 1;
@@ -190,19 +192,102 @@ int comparasion(AVLTreeNode *node,int k, int v){
 	}
 }
 
+// count the size from the current node
+// int size(AVLTreeNode *node){
+// 	if(node == NULL){
+// 		return 0;
+// 	}else{
+// 		return (size(node->left)+size(node->right)+1);
+// 	}
+// }
+
+// // new struct for storing a tree node and a direction
+// typedef struct TreeDirection{
+// 	AVLTreeNode *node;
+// 	char *direction;
+// }TreeDirection;
+
+// // create a new TreeDirection
+// TreeDirection *TD(AVLTreeNode *TheNode, char *TheDirection){
+// 	TreeDirection *new;
+// 	new->node = TheNode;
+// 	new->direction = TheDirection;
+// 	return new;
+// }
+
 // put your time complexity analysis for Search() here
+// return the tree itself when it is an empty tree; return a node and a direction when it is not.
+// This function may occura potential problem: return data type is different from the function type.!!!
+// AVLTreeNode *Search(AVLTree *T, int k, int v)
+// {
+//   // put your code here
+// 	if(T->size == 0){
+// 		// The tree is empty, so return the T itself.
+// 		return T;
+// 	}else{
+// 		// return a node and a direction when it is not empty.
+// 		AVLTree *subtree;
+// 		if(comparasion(T->root,k,v)>=0){
+// 			if(T->root->left != NULL){
+// 				// make the left part as a subtree for recursion
+// 				subtree->root = T->root->left;
+// 				subtree->size = size(subtree->root->left);
+// 				Search(subtree, k,v);
+// 			}else{
+// 				TreeDirection *temp;
+// 				temp->node = T->root;
+// 				temp->direction = "left";
+// 				return temp;
+// 			}
+// 		}else{
+// 			if(T->root->right != NULL){
+// 				// make the right part as a subtree for recursion
+// 				subtree->root = T->root->right;
+// 				subtree->size = size(subtree->root->right);
+// 				Search(subtree, k,v);
+// 			}else{
+// 				TreeDirection *temp;
+// 				temp->node = T->root;
+// 				temp->direction = "right";
+// 				return temp;
+// 			}
+// 		}
+// 	}
+// }
 AVLTreeNode *Search(AVLTree *T, int k, int v)
 {
   // put your code here
 	if(T->size == 0){
-		// The tree is empty, so return the T itself.
-		return T;
+		// The tree is empty, so return NULL.
+		return NULL;
 	}else{
-		AVLTreeNode *current;
-		
+		// return a node and a direction when it is not empty.
+		AVLTree *subtree;
+		if(comparasion(T->root,k,v)>=0){
+			if(T->root->left != NULL){
+				// make the left part as a subtree for recursion
+				subtree->root = T->root->left;
+				// This step may make the complexity very high!!
+				// just leave it first, if the time complexity is too high 
+				// and cant figure out another way, then may be just ignore this variable.
+				// subtree->size = size(subtree->root->left);
+				Search(subtree, k,v);
+			}else{
+				return T->root;
+			}
+		}else{
+			if(T->root->right != NULL){
+				// make the right part as a subtree for recursion
+				subtree->root = T->root->right;
+				// This step may make the complexity very high!!
+				// subtree->size = size(subtree->root->right);
+				Search(subtree, k,v);
+			}else{
+				return T->root;
+			}
+		}
 	}
 }
-
 // put your time complexity analysis for freeAVLTree() here
 void FreeAVLTree(AVLTree *T)
 {
