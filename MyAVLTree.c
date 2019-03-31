@@ -53,16 +53,16 @@ int getKV(char *pointer){
 	int values[2];
 	// set up the delimiter to split the string
 	char deli2[] ="(,)";
-	char *p = strtok(&pointer,deli2);
+	char *p = strtok(pointer,deli2);
 	while(p!=NULL){
 		//assign two intgers to the int array
-		values[0] = atoi(&p);
+		values[0] = atoi(*p);
 		p++;
 		if (p == NULL){
 			printf("Errors in input!");
 			exit(0);
 		}else{
-			values[1] = atoi(&p);
+			values[1] = atoi(*p);
 		}
 		p = strtok(NULL,deli2);
 	}
