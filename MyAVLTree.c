@@ -170,8 +170,7 @@ void increaseH(AVLTreeNode *N){
 }
 
 //rotation
-AVLTree *rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
-	AVLTree *balancedT;
+void *rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
 	if(unbalancedT->size <= 1){
 		return unbalancedT;
 	}else{
@@ -237,9 +236,6 @@ AVLTree *rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
 			c->left = b->right;
 		}
 		b->right = c;
-		//assign the balanced tree
-		balancedT = unbalancedT;
-		return balancedT;
 	}
 }
 
@@ -274,29 +270,34 @@ int InsertNode(AVLTree *T, int k, int v)
 
 	//serach for the inserting position
 	AVLTreeNode *node;
-	AVLTreeNode *newNode;
-	AVLTree *balancedTree;
-	newNode->key = k;
-	newNode->value = v;
-	node = BS(T,k,v);
-	// insert new node
-	if (node == NULL){
-		T->root = newNode;
+	node = Search(T,k,v);
+	if(node != NULL){
+		return 0;
 	}else{
-		if(comparasion(node,k,v)>=0){
-			node->left = newNode;
+		AVLTreeNode *newNode;
+		newNode->key = k;
+		newNode->value = v;
+		node = BS(T,k,v);
+		// insert new node
+		if (node == NULL){
+			T->root = newNode;
 		}else{
-			node->right = newNode;
+			if(comparasion(node,k,v)>=0){
+				node->left = newNode;
+			}else{
+				node->right = newNode;
+			}
+			newNode->parent = node;
+			// increase all the parent's height by 1 after inserting a node
+			increaseH(node);
 		}
-		newNode->parent = node;
-		// increase all the parent's height by 1 after inserting a node
-		increaseH(node);
+		// increase the size of the tree
+		T->size++;
+		// do rotation
+		rotation(T,newNode);
+		return 1;
 	}
-	// increase the size of the tree
-	T->size++;
-	// do rotation
-	balancedTree = rotation(T,newNode);
-	return balancedTree;
+	
 }
 
 // put your time complexity for DeleteNode() here
@@ -334,7 +335,7 @@ int comparasion(AVLTreeNode *node,int k, int v){
 // }
 
 // put your time complexity analysis for Search() here
-// This function is just for search the specific node
+// The tree is empty, so return NULL; return a node if it finds the item, otherwise, return NULL.
 AVLTreeNode *Search(AVLTree *T, int k, int v)
 {
 	AVLTreeNode *Target;
@@ -367,13 +368,14 @@ AVLTreeNode *Search(AVLTree *T, int k, int v)
 // put your time complexity analysis for freeAVLTree() here
 void FreeAVLTree(AVLTree *T)
 {
-// put your code here	
+// put your code here
 }
 
 // put your time complexity analysis for PrintAVLTree() here
 void PrintAVLTree(AVLTree *T)
 {
  // put your code here
+
 }
 
 int main() //sample main for testing 
