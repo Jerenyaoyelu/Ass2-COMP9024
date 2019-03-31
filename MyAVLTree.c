@@ -46,26 +46,13 @@ AVLTree *newAVLTree(){
 	T->root = NULL;
 	return T;
 }
+// declaration
+int InsertNode(AVLTree *T, int k, int v);
+AVLTreeNode *Search(AVLTree *T, int k, int v);
 
 // get the key and value from a pointer,returns two integers using splitting string based on specific delimiters
 int *getKV(char *pointer){
-	int values[2];
-	int i = 0;
-	// set up the delimiter to split the string
-	char deli2[] ="(,)";
-	char *p = strtok(pointer,deli2);
-	while(p!=NULL){
-		//assign two intgers to the int array
-		values[i] = atoi(p);
-		i++;
-		if (p == NULL){
-			printf("Errors in input!");
-			exit(0);
-		}
-		p = strtok(NULL,deli2);
-	}
-	int *pint = values;
-	return pint;
+
 }
 
 // Compare two nodes
@@ -177,7 +164,6 @@ void rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
 
 // return NULL when it is an empty tree, otherwise, return the node being about to be the parent of the new node.
 AVLTreeNode *BS(AVLTreeNode *Root, int k, int v){
-  // put your code here
 	AVLTreeNode *position;
 	if(Root == NULL){
 		// The tree is empty, so return the T itself.
@@ -197,39 +183,48 @@ AVLTreeNode *BS(AVLTreeNode *Root, int k, int v){
 	return position;
 }
 
-// declaration
-int InsertNode(AVLTree *T, int k, int v);
-
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
  // create an empty tree
  AVLTree *tree;
+ tree = newAVLTree();
  int t;
  char data_string[255];
  if(strncmp(filename,"stdin",5)==0){
-	 // set up the delimiter to split the input string line by line
-	 char delimiter[] =" ";
 	 while (1){
 		 // assgin the input string to the data_string line by line
 		  gets(data_string);
+			printf("data %s\n",data_string);
 			// if it is a empty line, then the input is done, ending up reading from the standard input
 			if(strlen(data_string)==0){
 				break;
 			}
-			//take each item from the line one by one and insert them into the tree.
-			char *ptr = strtok(data_string,delimiter);
-			while (ptr!=NULL){
-				//get the key and value from the tuple
-				int *pts = getKV(ptr);
-				int key, value;
-				//assign key and value
-				key = *pts;
-				pts++;
-				value = *pts;
-				//insert the new item
-				t = InsertNode(tree,key,value);
-				//split the string from the next token's starting position it remembers
-				ptr = strtok(NULL,delimiter);
+			char parenthses = '\0';
+			char integer[255];
+			int len;
+			int j = 0;
+			int values[2];
+			for(int i = 0; i < strlen(data_string);i++){
+				if(parenthses == '(' || parenthses == ')'){
+					if(parenthses == '\0'){
+						parenthses = data_string[i];
+					}else if(data_string[i] == parenthses){
+						printf("Error syntax!!");
+						exit(0);
+					}else{
+						parenthses = '\0';
+					}
+				}else if(data_string[i] == ','){
+					if(j == 2){
+						printf("(%d,%d)\n",values[0],values[1]);
+						j = 0;
+					}
+					values[j] = atoi(integer);
+				}else if(data_string[i] == ' '){
+					len = strlen(integer);
+					integer[len] = data_string[i];
+					integer[len+1] = '\0';
+				}
 			}
 	 }
  }else{
@@ -247,20 +242,92 @@ AVLTree *CreateAVLTree(const char *filename){
 			if(feof(fp)){
 				break;
 			}
-			char *ptr = data_string;
-			//get the key and value from the tuple
-			int *pts = getKV(ptr);
-			int key, value;
-			//assign key and value
-			key = *pts;
-			pts++;
-			value = *pts;
-			//insert the new item
-			t = InsertNode(tree,key,value);
+			
+			// t = InsertNode(tree,key,value);
+			// printf("(%d,%d)\n",key,value);
 		}
+		printf("size: %d\n",tree->size);
 	 }
 	return tree;
 }
+
+// // put your time complexity analysis of CreateAVLTree() here
+// AVLTree *CreateAVLTree(const char *filename){
+//  // create an empty tree
+//  AVLTree *tree;
+//  tree = newAVLTree();
+//  int t;
+//  char data_string[255];
+//  if(strncmp(filename,"stdin",5)==0){
+// 	 // set up the delimiter to split the input string line by line
+// 	 char delimiter[] =" ";
+// 	 while (1){
+// 		 // assgin the input string to the data_string line by line
+// 		  gets(data_string);
+// 			printf("data %s\n",data_string);
+// 			// if it is a empty line, then the input is done, ending up reading from the standard input
+// 			if(strlen(data_string)==0){
+// 				break;
+// 			}
+// 			//take each item from the line one by one and insert them into the tree.
+// 			char *ptr = strtok(data_string,delimiter);
+// 			// get every item one by one
+// 			while (ptr!=NULL){
+// 				// only excute once,why ?!!!
+// 				printf("dp %s\n",ptr);
+// 				char tuple[255];
+// 				strcpy(tuple,ptr);
+// 				//problem in here!
+// 				//get the key and value from the tuple
+// 				int *pts = getKV(tuple);
+// 				int i = 0;
+// 				int values[2];
+// 				while(i<2){
+// 					//assign key and value
+// 					values[i] = *pts;
+// 					i++;
+// 					pts++;
+// 				}
+// 				// insert the new item
+// 				// algorithm problem!???
+// 				t = InsertNode(tree,values[0],values[1]);
+// 				printf("size: %d\n",tree->size);
+// 				printf("key of root: %d\n",tree->root->key);
+// 				//split the string from the next token's starting position it remembers
+// 				ptr = strtok(NULL,delimiter);
+// 			}
+// 	 }
+//  }else{
+// 		FILE *fp;
+// 		fp = fopen(filename,"r");
+// 		if (fp == NULL){
+// 			printf("Error occurs when opening file!");
+// 			return NULL;
+// 		}
+// 		//iteratively read tuples until the end of the file
+// 		while(1){
+// 			//reads string and stops when encounter white-space or new line
+// 			fscanf(fp,"%s",data_string);
+// 			//end of the file
+// 			if(feof(fp)){
+// 				break;
+// 			}
+// 			char *ptr = data_string;
+// 			//get the key and value from the tuple
+// 			int *pts = getKV(ptr);
+// 			int key, value;
+// 			//assign key and value
+// 			key = *pts;
+// 			pts++;
+// 			value = *pts;
+// 			//insert the new item
+// 			t = InsertNode(tree,key,value);
+// 			// printf("(%d,%d)\n",key,value);
+// 		}
+// 		printf("size: %d\n",tree->size);
+// 	 }
+// 	return tree;
+// }
 
 // put your time complexity analysis for CloneAVLTree() here
 // AVLTree *CloneAVLTree(AVLTree *T)
@@ -288,31 +355,33 @@ int InsertNode(AVLTree *T, int k, int v){
 	//put your code here
 	//serach for the inserting position
 	AVLTreeNode *node;
-	node = BS(T->root,k,v);
-	if(node != NULL){
+	AVLTreeNode *newNode;
+	newNode = newAVLTreeNode(k,v);
+	// empty tree
+	if(T->root == NULL){
+		T->root = newNode;
+		T->size++;
+		return 1;
+	}
+	if(Search(T,k,v) != NULL){
+		//existing node
 		return 0;
 	}else{
-		AVLTreeNode *newNode;
-		newNode->key = k;
-		newNode->value = v;
+		//new node
 		node = BS(T->root,k,v);
-		// insert new node
-		if (node == NULL){
-			T->root = newNode;
+		printf("key of node: %d\n",node->key);
+		if(comparasion(node,k,v)>=0){
+			node->left = newNode;
 		}else{
-			if(comparasion(node,k,v)>=0){
-				node->left = newNode;
-			}else{
-				node->right = newNode;
-			}
-			newNode->parent = node;
-			// increase all the parent's height by 1 after inserting a node
-			increaseH(node);
+			node->right = newNode;
 		}
+		newNode->parent = node;
+		// increase all the parent's height by 1 after inserting a node
+		increaseH(node);
 		// increase the size of the tree
 		T->size++;
 		// do rotation
-		rotation(T,newNode);
+		// rotation(T,newNode);
 		return 1;
 	}
 }
@@ -326,6 +395,7 @@ int InsertNode(AVLTree *T, int k, int v){
 // O(log(n))
 // The tree is empty, so return NULL; return a node if it finds the item, otherwise, return NULL.
 AVLTreeNode *Search(AVLTree *T, int k, int v){
+	// it is just a pointer, not a node yet!!!
 	AVLTreeNode *Target;
   // put your code here
 	if(T->root == NULL){
@@ -334,6 +404,7 @@ AVLTreeNode *Search(AVLTree *T, int k, int v){
 	}else{
 		// return a node if it finds the item, otherwise, return NULL.
 		AVLTree *subtree;
+		subtree = newAVLTree();
 		if(comparasion(T->root,k,v) == 0){
 			return T->root;
 		}else if(comparasion(T->root,k,v) > 0){
@@ -357,6 +428,8 @@ AVLTreeNode *Search(AVLTree *T, int k, int v){
 void FreeAVLTree(AVLTree *T){
 	// put your code here
 	AVLTree *subLeft,*subRight;
+	subLeft = newAVLTree();
+	subRight = newAVLTree();
 	if(T->root->left != NULL){
 		subLeft->root = T->root->left;
 		T->root->left->parent = NULL;
@@ -376,6 +449,8 @@ void PrintAVLTree(AVLTree *T){
  // put your code here
 	AVLTreeNode *current = T->root;
 	AVLTree *subL, *subR;
+	subL = newAVLTree();
+	subR = newAVLTree();
 	if(current->left != NULL){
 		subL ->root = current->left;
 		PrintAVLTree(subL);
