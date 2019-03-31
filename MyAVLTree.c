@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include<stdbool.h>
+#include<string.h>
 
 // all the basic data structures and functions are included in this template
 // you can add your own auxiliary functions as you like 
@@ -49,20 +50,20 @@ AVLTree *newAVLTree()
 }
 
 // get the key and value from a pointer,returns two integers using splitting string based on specific delimiters
-int getKV(char *pointer){
+int *getKV(char *pointer){
 	int values[2];
 	// set up the delimiter to split the string
 	char deli2[] ="(,)";
 	char *p = strtok(pointer,deli2);
 	while(p!=NULL){
 		//assign two intgers to the int array
-		values[0] = atoi(*p);
+		values[0] = atoi(p);
 		p++;
 		if (p == NULL){
 			printf("Errors in input!");
 			exit(0);
 		}else{
-			values[1] = atoi(*p);
+			values[1] = atoi(p);
 		}
 		p = strtok(NULL,deli2);
 	}
