@@ -170,11 +170,75 @@ void increaseH(AVLTreeNode *N){
 }
 
 //rotation
-AVLTree *rotation(AVLTree *unbalancedT){
+AVLTree *rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
 	AVLTree *balancedT;
 	if(unbalancedT->size <= 1){
 		return unbalancedT;
 	}else{
+		// find x,y,z
+		AVLTreeNode *x=NULL, *y=NULL, *z = NULL;
+		AVLTreeNode *a, *b, *c;
+		AVLTreeNode *current = insertedN;
+		while(1){
+			if(isBalance(current->parent)){
+				current = current->parent;
+			}else{
+				break;
+			}
+		}
+		z = current;
+		if(z->left->height >= z->right->height){
+			y = z->left;
+		}else{
+			y = z->right;
+		}
+		if(y->left->height >= y->right->height){
+			x = y->left;
+		}else{
+			x = y->right;
+		}
+		// assign a,b,c
+		if(comparasion(x,y->key,y->value)>=0){
+			c = x;
+			a = y;
+			if(comparasion(y,z->key,z->value)>=0){
+				a = z;
+				b = y;
+			}else{
+				if(comparasion(x,z->key,z->value)>=0){
+					b = z;
+				}else{
+					b = x;
+					c = z;
+				}
+			}
+		}else{
+			a = x;
+			c = y;
+			if(comparasion(y,z->key,z->value)>=0){
+				if(comparasion(x,z->key,z->value)>=0){
+					a = z;
+					b = x;
+				}else{
+					b = z;
+				}
+			}else{
+				b = y;
+				c = z;
+			}
+		}
+		//restructring the tree
+		b->parent = z->parent;
+		if(b->left != NULL){
+			a->right = b->left;
+		}
+		b->left = a;
+		if(b->right != NULL){
+			c->left = b->right;
+		}
+		b->right = c;
+		//assign the balanced tree
+		balancedT = unbalancedT;
 		return balancedT;
 	}
 }
@@ -231,7 +295,7 @@ int InsertNode(AVLTree *T, int k, int v)
 	// increase the size of the tree
 	T->size++;
 	// do rotation
-	balancedTree = rotation(T);
+	balancedTree = rotation(T,newNode);
 	return balancedTree;
 }
 
