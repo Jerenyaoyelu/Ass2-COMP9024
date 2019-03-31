@@ -50,18 +50,17 @@ AVLTree *newAVLTree(){
 // get the key and value from a pointer,returns two integers using splitting string based on specific delimiters
 int *getKV(char *pointer){
 	int values[2];
+	int i = 0;
 	// set up the delimiter to split the string
 	char deli2[] ="(,)";
 	char *p = strtok(pointer,deli2);
 	while(p!=NULL){
 		//assign two intgers to the int array
-		values[0] = atoi(p);
-		p++;
+		values[i] = atoi(p);
+		i++;
 		if (p == NULL){
 			printf("Errors in input!");
 			exit(0);
-		}else{
-			values[1] = atoi(p);
 		}
 		p = strtok(NULL,deli2);
 	}
@@ -394,8 +393,8 @@ int main(){ int i,j;
  AVLTreeNode *node1;
  
  tree1=CreateAVLTree("stdin");
- PrintAVLTree(tree1);
- FreeAVLTree(tree1);
+//  PrintAVLTree(tree1);
+//  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
 //  tree2=CreateAVLTree("file1.txt"); 
