@@ -95,6 +95,7 @@ AVLTree *CreateAVLTree(const char *filename)
 {
  // create an empty tree
  AVLTree *tree;
+ int t;
  char data_string[255];
  if(strncmp(filename,"stdin",5)==0){
 	 // set up the delimiter to split the input string line by line
@@ -117,9 +118,9 @@ AVLTree *CreateAVLTree(const char *filename)
 				pts++;
 				value = *pts;
 				//insert the new item
-				InsertNode(tree,key,value);
+				t = InsertNode(tree,key,value);
 				//split the string from the next token's starting position it remembers
-				ptr = strok(NULL,delimiter);
+				ptr = strtok(NULL,delimiter);
 			}
 	 }
  }else{
@@ -146,29 +147,30 @@ AVLTree *CreateAVLTree(const char *filename)
 			pts++;
 			value = *pts;
 			//insert the new item
-			InsertNode(tree,key,value);
+			t = InsertNode(tree,key,value);
 		}
 	 }
+	return tree;
 }
 
 // put your time complexity analysis for CloneAVLTree() here
-AVLTree *CloneAVLTree(AVLTree *T)
-{
- // put your code here
+// AVLTree *CloneAVLTree(AVLTree *T)
+// {
+//  // put your code here
   
-}
+// }
  
-// put your time complexity for ALVTreesUNion() here
-AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
-{
-	//put your code here
-}
+// // put your time complexity for ALVTreesUNion() here
+// AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
+// {
+// 	//put your code here
+// }
  
-// put your time complexity for ALVTreesIntersection() here
-AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
-{
-	 //put your code here
-}
+// // put your time complexity for ALVTreesIntersection() here
+// AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
+// {
+// 	 //put your code here
+// }
 
 // check if the node is in balance
 bool isBalance(AVLTreeNode *newNode){
@@ -191,10 +193,8 @@ void increaseH(AVLTreeNode *N){
 
 //rotation
 //O(log(n))
-void *rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
-	if(unbalancedT->size <= 1){
-		return unbalancedT;
-	}else{
+void rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
+	if(unbalancedT->size > 1){
 		// find x,y,z
 		AVLTreeNode *x=NULL, *y=NULL, *z = NULL;
 		AVLTreeNode *a, *b, *c;
@@ -292,7 +292,7 @@ int InsertNode(AVLTree *T, int k, int v)
 
 	//serach for the inserting position
 	AVLTreeNode *node;
-	node = Search(T,k,v);
+	node = BS(T->root,k,v);
 	if(node != NULL){
 		return 0;
 	}else{
@@ -323,10 +323,10 @@ int InsertNode(AVLTree *T, int k, int v)
 }
 
 // put your time complexity for DeleteNode() here
-int DeleteNode(AVLTree *T, int k, int v)
-{
- // put your code here
-}
+// int DeleteNode(AVLTree *T, int k, int v)
+// {
+//  // put your code here
+// }
 
 // O(log(n))
 // The tree is empty, so return NULL; return a node if it finds the item, otherwise, return NULL.
