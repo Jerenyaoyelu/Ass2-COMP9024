@@ -160,97 +160,73 @@ void print2D(AVLTreeNode *root) {
 } 
 //////////////////////////////////////////////
 
-// increase height
+//calculate height
+int calHt(AVLTreeNode *N){
+	if(N == NULL){
+		return -1;
+	}
+	return max(calHt(N->left),calHt(N->right))+1;
+}
+
+// recalculate the height
 void increaseH(AVLTreeNode *N){
 	AVLTreeNode *current = N;
 	while(current!=NULL){
-		if(current->left != NULL && current->right != NULL){
-			current->height = max(current->left->height,current->right->height)+1;
-		}else if(current->left == NULL && current->right == NULL ){
-			current->height = 0;
-		}else if(current->left == NULL){
-			current->height = current->right->height+1;
-		}else{
-			current->height = current->left->height+1;
-		}
+		current -> height = calHt(current);
 		current = current->parent;
 	}
 }
 
-//rotation
-//O(log(n))
-AVLTree *rotation(AVLTree *unbalancedT, int k,int v){
-	AVLTreeNode *x=NULL, *y=NULL, *z = NULL;
-	AVLTreeNode *a, *b, *c;
-	//starting node
-	z = Search(unbalancedT,k,v);
-	if(z->left->height >= z->right->height){
-		y = z->left;
+// right rotation
+// O(log(n))
+void Rrotation(AVLTree *uT, AVLTreeNode *un){
+	AVLTreeNode *b = un->left;
+	// break and reconnect
+	if(un == uT->root){
+		uT->root = b;
+		b->parent = NULL;
+	}else if(un == un->parent->left){
+		un->parent->left = b;
 	}else{
-		y = z->right;
+		un->parent->right = b;
 	}
-	if(y->left->height >= y->right->height){
-		x = y->left;
-	}else{
-		x = y->right;
-	}
-	// assign a,b,c
-	if(comparasion(x,y->key,y->value)>=0){
-		c = x;
-		a = y;
-		if(comparasion(y,z->key,z->value)>=0){
-			a = z;
-			b = y;
-		}else{
-			if(comparasion(x,z->key,z->value)>=0){
-				b = z;
-			}else{
-				b = x;
-				c = z;
-			}
-		}
-	}else{
-		a = x;
-		c = y;
-		if(comparasion(y,z->key,z->value)>=0){
-			if(comparasion(x,z->key,z->value)>=0){
-				a = z;
-				b = x;
-			}else{
-				b = z;
-			}
-		}else{
-			b = y;
-			c = z;
-		}
-	}
-	//restructring the tree
-	//height needs to be recalculated!!
-	b->parent = z->parent;
-	if(b->left != NULL){
-		a->right = b->left;
-	}
-	b->left = a;
-	if(b->right != NULL){
-		c->left = b->right;
-	}
-	b->right = c;
-	printf("tt3\n");
-	return unbalancedT;
+	//rotate
+	b->parent = un->parent;
+	un->left = b->right;
+	b->right->parent = un;
+	b->right = un;
+	un->parent = b;
+	//recalculate the height
+	b->height = calHt(b);
+	un->height = calHt(un);
 }
 
-void rebalance(AVLTree *ubT,int k,int v){
-	AVLTreeNode *crt = Search(ubT,k,v);
-	while(crt!=NULL){
-		printf("tt1\n");
-		if(abs(crt->left->height - crt->right->height) > 1){
-			printf("tt2\n");
-			ubT = rotation(ubT,crt->key,crt->value);
-		}else{
-			crt = crt->parent;
-		}
-	}
-}
+//left rotation
+// AVLTree *Lrotation(AVLTreeNode *un){
+// 	if(un == NULL||un->right == NULL){
+// 		return un;
+// 	}
+// 	AVLTreeNode *b = un->right;
+// 	un->right = b->left;
+// 	b->left->parent = un;
+// 	b->left = un;
+// 	un->parent = b;
+// 	return b;
+// }
+
+//
+// void rebalance(AVLTree *ubT,int k,int v){
+// 	AVLTreeNode *crt = Search(ubT,k,v);
+// 	while(crt!=NULL){
+// 		printf("tt1\n");
+// 		if(abs(crt->left->height - crt->right->height) > 1){
+// 			printf("tt2\n");
+// 			ubT = rotation(ubT,crt->key,crt->value);
+// 		}else{
+// 			crt = crt->parent;
+// 		}
+// 	}
+// }
 
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
@@ -441,6 +417,7 @@ int main(){ int i,j;
  
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
+//  printf("%d\n",calHt(tree1->root));
  print2D(tree1->root);
 //  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
