@@ -71,9 +71,7 @@ int *getKV(char *data_string){
 	char integer[255]="";
 	int len;
 	int j = 0;
-
 	int * values = (int *)malloc(255 * sizeof(int));
-
 	for(int i = 0; i < strlen(data_string);i++){
 		if(data_string[i] == '(' || data_string[i] == ')'){
 			if(parenthses == '\0'){
@@ -85,7 +83,7 @@ int *getKV(char *data_string){
 				int num;
 				num = convert(integer);
 				//no problem!!! how stupid am I !!!
-				values[j] = num;
+				values[j+1] = num;
 				// printf("%d\n",values[j]);
 				j++;
 				strcpy(integer,"");
@@ -95,7 +93,7 @@ int *getKV(char *data_string){
 			int num;
 			num  = convert(integer);
 			//no problem!!!
-			values[j] = num;
+			values[j+1] = num;
 			// printf("%d\n",values[j]);
 			j++;
 			strcpy(integer,"");
@@ -105,6 +103,8 @@ int *getKV(char *data_string){
 			integer[len+1] = '\0';
 		}
 	}
+	// insert the szie into the head of values
+	values[0] = j;
 	return values;
 }
 
@@ -273,9 +273,9 @@ AVLTree *CreateAVLTree(const char *filename){
 		}
 	}
 	int *pp;
-	//problem
 	pp = getKV(data_string);
-	for (int k = 0; k < 28; k++ ) {
+	//pp[0] is the size of the array!!
+	for (int k = 1; k <=pp[0] ; k++ ) {
 		printf("aa %d\n",*(pp+k));
 	}
 	return tree;
