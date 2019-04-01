@@ -50,9 +50,64 @@ AVLTree *newAVLTree(){
 int InsertNode(AVLTree *T, int k, int v);
 AVLTreeNode *Search(AVLTree *T, int k, int v);
 
-// get the key and value from a pointer,returns two integers using splitting string based on specific delimiters
-int *getKV(char *pointer){
+int convert(char *string){
+	int num = 0;
+	int pre = 1;
+	if(string[0]=='-'){
+		pre = -1;
+	}
+	for(int i = 0; i<strlen(string);i++){
+		if(string[i]!='-'){
+			int temp = string[i] - '0';
+			num = num*10+temp;
+		}
+	}
+	num = num*pre;
+	return num;
+}
 
+int *getKV(char *data_string){
+	char parenthses = '\0';
+	char integer[255]="";
+	int len;
+	int j = 0;
+	int values[255];
+	for(int i = 0; i < strlen(data_string);i++){
+		if(data_string[i] == '(' || data_string[i] == ')'){
+			if(parenthses == '\0'){
+				parenthses = data_string[i];
+			}else if(data_string[i] == parenthses){
+				printf("Error syntax!!\n");
+				exit(0);
+			}else{
+				int num;
+				num = convert(integer);
+				//no problem!!! how stupid am I !!!
+				values[j] = num;
+				// printf("%d\n",values[j]);
+				j++;
+				strcpy(integer,"");
+				parenthses = '\0';
+			}
+		}else if(data_string[i] == ','){
+			int num;
+			num  = convert(integer);
+			//no problem!!!
+			values[j] = num;
+			// printf("%d\n",values[j]);
+			j++;
+			strcpy(integer,"");
+		}else if(data_string[i] != ' '){
+			len = strlen(integer);
+			integer[len] = data_string[i];
+			integer[len+1] = '\0';
+		}
+	}
+	int *pint = values;
+	// for (int i = 0; i < 28; i++ ) {
+  //   printf("aa %d\n",*(pint+i));
+  // }
+	return pint;
 }
 
 // Compare two nodes
@@ -190,42 +245,16 @@ AVLTree *CreateAVLTree(const char *filename){
  tree = newAVLTree();
  int t;
  char data_string[255];
+ char data_pieces[255];
  if(strncmp(filename,"stdin",5)==0){
 	 while (1){
-		 // assgin the input string to the data_string line by line
-		  gets(data_string);
-			printf("data %s\n",data_string);
-			// if it is a empty line, then the input is done, ending up reading from the standard input
-			if(strlen(data_string)==0){
-				break;
-			}
-			char parenthses = '\0';
-			char integer[255];
-			int len;
-			int j = 0;
-			int values[2];
-			for(int i = 0; i < strlen(data_string);i++){
-				if(parenthses == '(' || parenthses == ')'){
-					if(parenthses == '\0'){
-						parenthses = data_string[i];
-					}else if(data_string[i] == parenthses){
-						printf("Error syntax!!");
-						exit(0);
-					}else{
-						parenthses = '\0';
-					}
-				}else if(data_string[i] == ','){
-					if(j == 2){
-						printf("(%d,%d)\n",values[0],values[1]);
-						j = 0;
-					}
-					values[j] = atoi(integer);
-				}else if(data_string[i] == ' '){
-					len = strlen(integer);
-					integer[len] = data_string[i];
-					integer[len+1] = '\0';
-				}
-			}
+		// assgin the input string to the data_string line by line
+		gets(data_pieces);
+		// if it is a empty line, then the input is done, ending up reading from the standard input
+		if(strlen(data_pieces)==0){
+			break;
+		}
+		strcat(data_string,data_pieces);
 	 }
  }else{
 		FILE *fp;
@@ -237,97 +266,22 @@ AVLTree *CreateAVLTree(const char *filename){
 		//iteratively read tuples until the end of the file
 		while(1){
 			//reads string and stops when encounter white-space or new line
-			fscanf(fp,"%s",data_string);
+			fscanf(fp,"%s",data_pieces);
 			//end of the file
 			if(feof(fp)){
 				break;
 			}
-			
-			// t = InsertNode(tree,key,value);
-			// printf("(%d,%d)\n",key,value);
+			strcat(data_string,data_pieces);
 		}
-		printf("size: %d\n",tree->size);
-	 }
+	}
+	int *pp;
+	//problem
+	pp = getKV(data_string);
+	for (int k = 0; k < 28; k++ ) {
+		printf("aa %d\n",*(pp+k));
+	}
 	return tree;
 }
-
-// // put your time complexity analysis of CreateAVLTree() here
-// AVLTree *CreateAVLTree(const char *filename){
-//  // create an empty tree
-//  AVLTree *tree;
-//  tree = newAVLTree();
-//  int t;
-//  char data_string[255];
-//  if(strncmp(filename,"stdin",5)==0){
-// 	 // set up the delimiter to split the input string line by line
-// 	 char delimiter[] =" ";
-// 	 while (1){
-// 		 // assgin the input string to the data_string line by line
-// 		  gets(data_string);
-// 			printf("data %s\n",data_string);
-// 			// if it is a empty line, then the input is done, ending up reading from the standard input
-// 			if(strlen(data_string)==0){
-// 				break;
-// 			}
-// 			//take each item from the line one by one and insert them into the tree.
-// 			char *ptr = strtok(data_string,delimiter);
-// 			// get every item one by one
-// 			while (ptr!=NULL){
-// 				// only excute once,why ?!!!
-// 				printf("dp %s\n",ptr);
-// 				char tuple[255];
-// 				strcpy(tuple,ptr);
-// 				//problem in here!
-// 				//get the key and value from the tuple
-// 				int *pts = getKV(tuple);
-// 				int i = 0;
-// 				int values[2];
-// 				while(i<2){
-// 					//assign key and value
-// 					values[i] = *pts;
-// 					i++;
-// 					pts++;
-// 				}
-// 				// insert the new item
-// 				// algorithm problem!???
-// 				t = InsertNode(tree,values[0],values[1]);
-// 				printf("size: %d\n",tree->size);
-// 				printf("key of root: %d\n",tree->root->key);
-// 				//split the string from the next token's starting position it remembers
-// 				ptr = strtok(NULL,delimiter);
-// 			}
-// 	 }
-//  }else{
-// 		FILE *fp;
-// 		fp = fopen(filename,"r");
-// 		if (fp == NULL){
-// 			printf("Error occurs when opening file!");
-// 			return NULL;
-// 		}
-// 		//iteratively read tuples until the end of the file
-// 		while(1){
-// 			//reads string and stops when encounter white-space or new line
-// 			fscanf(fp,"%s",data_string);
-// 			//end of the file
-// 			if(feof(fp)){
-// 				break;
-// 			}
-// 			char *ptr = data_string;
-// 			//get the key and value from the tuple
-// 			int *pts = getKV(ptr);
-// 			int key, value;
-// 			//assign key and value
-// 			key = *pts;
-// 			pts++;
-// 			value = *pts;
-// 			//insert the new item
-// 			t = InsertNode(tree,key,value);
-// 			// printf("(%d,%d)\n",key,value);
-// 		}
-// 		printf("size: %d\n",tree->size);
-// 	 }
-// 	return tree;
-// }
 
 // put your time complexity analysis for CloneAVLTree() here
 // AVLTree *CloneAVLTree(AVLTree *T)
