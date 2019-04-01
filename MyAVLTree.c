@@ -138,8 +138,7 @@ bool isBalance(AVLTreeNode *newNode){
 
 // increase height
 void increaseH(AVLTreeNode *N){
-	AVLTreeNode *current;
-	current = N;
+	AVLTreeNode *current = N;
 	while(current->parent!=NULL){
 		current->height++;
 		current = current->parent;
@@ -215,27 +214,6 @@ void rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
 	}
 }
 
-// return NULL when it is an empty tree, otherwise, return the node being about to be the parent of the new node.
-AVLTreeNode *BS(AVLTreeNode *Root, int k, int v){
-	AVLTreeNode *position;
-	if(Root == NULL){
-		// The tree is empty, so return the T itself.
-		return NULL;
-	}else if(comparasion(Root,k,v)>=0){
-		// return a node when it is not empty.
-		if (Root->left == NULL){
-			position = Root;
-		}
-		position = BS(Root->left, k,v);
-	}else{
-		if (Root->right == NULL){
-			position = Root;
-		}
-		position = BS(Root->right, k,v);
-	}
-	return position;
-}
-
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
  // create an empty tree
@@ -281,6 +259,7 @@ AVLTree *CreateAVLTree(const char *filename){
 		//make sure the loop goes by step 2
 		k++;
 	}
+	printf("size:%d\n",tree->size);
 	return tree;
 }
 
@@ -338,6 +317,8 @@ int InsertNode(AVLTree *T, int k, int v){
 	T->size++;
 	newNode->parent = current;
 	increaseH(current);
+	// problem:
+	// rotation(T,newNode);
 	return 1;
 }
 // put your time complexity for DeleteNode() here
@@ -408,8 +389,8 @@ void PrintAVLTree(AVLTree *T){
 	if(current->left != NULL){
 		subL ->root = current->left;
 		PrintAVLTree(subL);
-		printf("(%d,%d),%d\n",current->key,current->value,current->height);
 	}
+	printf("(%d,%d),%d\n",current->key,current->value,current->height);
 	if(current->right != NULL){
 		subR ->root = current->right;
 		PrintAVLTree(subR);
@@ -422,7 +403,7 @@ int main(){ int i,j;
  AVLTreeNode *node1;
  
  tree1=CreateAVLTree("File1.txt");
-//  PrintAVLTree(tree1);
+ PrintAVLTree(tree1);
 //  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
