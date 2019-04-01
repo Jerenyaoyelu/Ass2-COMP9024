@@ -185,48 +185,98 @@ void Rrotation(AVLTree *uT, AVLTreeNode *un){
 	if(un == uT->root){
 		uT->root = b;
 		b->parent = NULL;
-	}else if(un == un->parent->left){
-		un->parent->left = b;
 	}else{
-		un->parent->right = b;
-	}
+		if(un == un->parent->left){
+			un->parent->left = b;
+		}else{
+			un->parent->right = b;
+		}
+		b->parent = un->parent;
+	} 
 	//rotate
-	b->parent = un->parent;
 	un->left = b->right;
-	b->right->parent = un;
+	if(b->right!=NULL){
+		b->right->parent = un;
+	}
 	b->right = un;
 	un->parent = b;
 	//recalculate the height
-	b->height = calHt(b);
-	un->height = calHt(un);
+	increaseH(b);
+	increaseH(un);
 }
 
 //left rotation
-// AVLTree *Lrotation(AVLTreeNode *un){
-// 	if(un == NULL||un->right == NULL){
-// 		return un;
-// 	}
-// 	AVLTreeNode *b = un->right;
-// 	un->right = b->left;
-// 	b->left->parent = un;
-// 	b->left = un;
-// 	un->parent = b;
-// 	return b;
-// }
+void Lrotation(AVLTree *uT, AVLTreeNode *un){
+	AVLTreeNode *b = un->right;
+	// break and reconnect
+	if(un == uT->root){
+		uT->root = b;
+		b->parent = NULL;
+	}else{
+		if(un == un->parent->left){
+			un->parent->left = b;
+		}else{
+			un->parent->right = b;
+		}
+		b->parent = un->parent;
+	} 
+	//rotate
+	un->right = b->left;
+	if(b->left != NULL){
+		b->left->parent = un;
+	}
+	b->left = un;
+	un->parent = b;
+	//recalculate the height
+	increaseH(b);
+	increaseH(un);
+}
 
-//
-// void rebalance(AVLTree *ubT,int k,int v){
-// 	AVLTreeNode *crt = Search(ubT,k,v);
-// 	while(crt!=NULL){
-// 		printf("tt1\n");
-// 		if(abs(crt->left->height - crt->right->height) > 1){
-// 			printf("tt2\n");
-// 			ubT = rotation(ubT,crt->key,crt->value);
-// 		}else{
-// 			crt = crt->parent;
-// 		}
-// 	}
-// }
+//get difference of heights of its chidren
+int difference(AVLTreeNode *N){
+	if(N->left !=NULL && N->right != NULL){
+		return N->left->height - N->right->height;
+	}else if(N->right != NULL){
+		return -1 - N->right->height;
+	}else if(N->left != NULL){
+		return N->left->height - (-1);
+	}else{
+		return 0;
+	}
+}
+
+//rebalance the tree
+void rebalance(AVLTree *ubT,AVLTreeNode *newN){
+	AVLTreeNode *crt = newN;
+	while(crt!=NULL){
+		//recalculate the height
+		// increaseH(crt);
+		int diff;
+		//get the difference of heights of left and right
+		diff = difference(crt);
+		//find first unbalanced ancestor
+		if(diff < -1){
+			//right subtree heavy
+			if(difference(crt->right)<0){
+				Lrotation(ubT,crt);
+			}else{
+				//need double rotation
+				Rrotation(ubT,crt->right);
+				Lrotation(ubT,crt);
+			}
+		}else if(diff > 1){
+			//left subtree heavy
+			if(difference(crt->left)>0){
+				Rrotation(ubT,crt);
+			}else{
+				//need double rotation
+				Lrotation(ubT,crt->left);
+				Rrotation(ubT,crt);
+			}
+		}
+		crt = crt->parent;
+	}
+}
 
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
@@ -273,7 +323,7 @@ AVLTree *CreateAVLTree(const char *filename){
 		//make sure the loop goes by step 2
 		k++;
 	}
-	printf("size:%d\n",tree->size);
+	// printf("size:%d\n",tree->size);
 	return tree;
 }
 
@@ -339,7 +389,7 @@ int InsertNode(AVLTree *T, int k, int v){
 	T->size++;
 	newNode->parent = current;
 	increaseH(newNode);
-	// rebalance(T,k,v);
+	rebalance(T,newNode);
 	return 1;
 }
 
