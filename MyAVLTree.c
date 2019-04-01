@@ -276,7 +276,10 @@ AVLTree *CreateAVLTree(const char *filename){
 	pp = getKV(data_string);
 	//pp[0] is the size of the array!!
 	for (int k = 1; k <=pp[0] ; k++ ) {
-		printf("aa %d\n",*(pp+k));
+		//got the (key,value)!!
+		printf("(%d,%d)\n",*(pp+k),*(pp+k+1));
+		//make sure the loop goes by step 2
+		k++;
 	}
 	return tree;
 }
