@@ -263,11 +263,20 @@ AVLTree *CreateAVLTree(const char *filename){
 	return tree;
 }
 
-// put your time complexity analysis for CloneAVLTree() here
+// //put your time complexity analysis for CloneAVLTree() here
 // AVLTree *CloneAVLTree(AVLTree *T)
 // {
 //  // put your code here
-  
+//   AVLTreeNode *current = T->root;
+// 	AVLTreeNode *crtCln;
+// 	AVLTree *subL, *subR, *clone;
+// 	subL = newAVLTree();
+// 	subR = newAVLTree();
+// 	clone = newAVLTree();
+// 	clone->size = T->size;
+// 	clone->root = T->root;
+// 	crtCln = clone->root;
+	
 // }
  
 // // put your time complexity for ALVTreesUNion() here
@@ -303,7 +312,7 @@ int InsertNode(AVLTree *T, int k, int v){
 				current = current->left;
 			}
 		}else if(comparasion(current,k,v)==0){
-			printf("existing node!\n");
+			// printf("existing node!\n");
 			return 0;
 		}else{
 			if(current->right == NULL){
@@ -321,6 +330,7 @@ int InsertNode(AVLTree *T, int k, int v){
 	// rotation(T,newNode);
 	return 1;
 }
+
 // put your time complexity for DeleteNode() here
 // int DeleteNode(AVLTree *T, int k, int v)
 // {
@@ -330,34 +340,23 @@ int InsertNode(AVLTree *T, int k, int v){
 // O(log(n))
 // The tree is empty, so return NULL; return a node if it finds the item, otherwise, return NULL.
 AVLTreeNode *Search(AVLTree *T, int k, int v){
-	// it is just a pointer, not a node yet!!!
-	AVLTreeNode *Target;
-  // put your code here
 	if(T->root == NULL){
 		// The tree is empty, so return NULL.
 		return NULL;
 	}else{
+		AVLTreeNode *crnt = T->root;
 		// return a node if it finds the item, otherwise, return NULL.
-		AVLTree *subtree;
-		subtree = newAVLTree();
-		if(comparasion(T->root,k,v) == 0){
-			return T->root;
-		}else if(comparasion(T->root,k,v) > 0){
-			if(T->root->left != NULL){
-				// make the left part as a subtree for recursion
-				// attention: the size of this subtree will always be 0, because we did not calculate it due to its uselessness here.
-				subtree->root = T->root->left;
-				Target = Search(subtree, k,v);
-			}
-		}else{
-			if(T->root->right != NULL){
-				// make the right part as a subtree for recursion
-				subtree->root = T->root->right;
-				Target = Search(subtree, k,v);
+		while(crnt != NULL){
+			if(comparasion(crnt,k,v) == 0){
+				return crnt;
+			}else if(comparasion(crnt,k,v) > 0){
+				crnt = crnt->left;
+			}else{
+				crnt = crnt->right;
 			}
 		}
+		return NULL;
 	}
-	return Target;
 }
 // O(n)
 void FreeAVLTree(AVLTree *T){
@@ -368,11 +367,13 @@ void FreeAVLTree(AVLTree *T){
 	if(T->root->left != NULL){
 		subLeft->root = T->root->left;
 		T->root->left->parent = NULL;
+		T->root->left = NULL;
 		FreeAVLTree(subLeft);
 	}
 	if(T->root->right != NULL){
 		subRight->root = T->root->right;
 		T->root->right->parent = NULL;
+		T->root->right = NULL;
 		FreeAVLTree(subRight);
 	}
 	T->size = 0;
@@ -404,7 +405,7 @@ int main(){ int i,j;
  
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
-//  FreeAVLTree(tree1);
+ FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
 //  tree2=CreateAVLTree("file1.txt"); 
@@ -414,19 +415,19 @@ int main(){ int i,j;
 //  FreeAVLTree(tree2);
 //  FreeAVLTree(tree3);
 //  //Create tree4 
-//  tree4=newAVLTree();
-//  j=InsertNode(tree4, 10, 10);
-//  for (i=0; i<15; i++)
-//   {
-//    j=InsertNode(tree4, i, i);
-//    if (j==0) printf("(%d, %d) already exists\n", i, i);
-//   }
-//   PrintAVLTree(tree4);
-//   node1 = Search(tree4,20,20);
-//   if (node1!=NULL)
-//     printf("key= %d value= %d\n",node1->key,node1->value);
-//   else 
-//     printf("Key 20 does not exist\n");
+ tree4=newAVLTree();
+ j=InsertNode(tree4, 10, 10);
+ for (i=0; i<15; i++)
+  {
+   j=InsertNode(tree4, i, i);
+   if (j==0) printf("(%d, %d) already exists\n", i, i);
+  }
+  PrintAVLTree(tree4);
+  node1 = Search(tree4,20,20);
+  if (node1!=NULL)
+    printf("key= %d value= %d\n",node1->key,node1->value);
+  else 
+    printf("Key 20 does not exist\n");
   
 //   for (i=17; i>0; i--)
 //   {
