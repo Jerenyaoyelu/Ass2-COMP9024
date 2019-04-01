@@ -3,6 +3,10 @@
 #include <assert.h>
 #include<stdbool.h>
 #include<string.h>
+#ifndef max
+	#define max( a, b ) ( ((a) > (b)) ? (a) : (b) )
+#endif
+#define COUNT 10
 
 // all the basic data structures and functions are included in this template
 // you can add your own auxiliary functions as you like 
@@ -136,11 +140,65 @@ bool isBalance(AVLTreeNode *newNode){
 	}
 }
 
+///
+void print2DUtil(AVLTreeNode *root, int space) 
+{ 
+    // Base case 
+    if (root == NULL) 
+        return; 
+  
+    // Increase distance between levels 
+    space += COUNT; 
+  
+    // Process right child first 
+    print2DUtil(root->right, space); 
+  
+    // Print current node after space 
+    // count 
+    printf("\n"); 
+    for (int i = COUNT; i < space; i++) 
+        printf(" "); 
+    printf("(%d,%d)\n", root->key,root->value); 
+  
+    // Process left child 
+    print2DUtil(root->left, space); 
+} 
+  
+// Wrapper over print2DUtil() 
+void print2D(AVLTreeNode *root) 
+{ 
+   // Pass initial space count as 0 
+   print2DUtil(root, 0); 
+} 
+///
+// // compute height of Tree
+// int TreeHeight(AVLTree *T) {
+//    if (T->root == NULL) {
+//       return 0;
+//    } else {
+//       int lheight = 1 + TreeHeight(left(t));
+//       int rheight = 1 + TreeHeight(right(t));
+//       if (lheight > rheight)
+// 	 return lheight;
+//       else
+// 	 return rheight;
+//    }
+// }
+
+
 // increase height
 void increaseH(AVLTreeNode *N){
 	AVLTreeNode *current = N;
-	while(current->parent!=NULL){
-		current->height++;
+	while(current!=NULL){
+		if(current->left != NULL && current->right != NULL){
+			current->height = max(current->left->height,current->right->height)+1;
+		}else if(current->left == NULL && current->right == NULL ){
+			current->height = 0;
+		}else if(current->left == NULL){
+			current->height = current->right->height+1;
+		}else{
+			current->height = current->left->height+1;
+		}
 		current = current->parent;
 	}
 }
@@ -312,7 +370,6 @@ int InsertNode(AVLTree *T, int k, int v){
 				current = current->left;
 			}
 		}else if(comparasion(current,k,v)==0){
-			// printf("existing node!\n");
 			return 0;
 		}else{
 			if(current->right == NULL){
@@ -325,7 +382,7 @@ int InsertNode(AVLTree *T, int k, int v){
 	}
 	T->size++;
 	newNode->parent = current;
-	increaseH(current);
+	increaseH(newNode);
 	// problem:
 	// rotation(T,newNode);
 	return 1;
@@ -405,6 +462,7 @@ int main(){ int i,j;
  
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
+ print2D(tree1->root);
  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
@@ -423,6 +481,7 @@ int main(){ int i,j;
    if (j==0) printf("(%d, %d) already exists\n", i, i);
   }
   PrintAVLTree(tree4);
+	print2D(tree4->root);
   node1 = Search(tree4,20,20);
   if (node1!=NULL)
     printf("key= %d value= %d\n",node1->key,node1->value);
