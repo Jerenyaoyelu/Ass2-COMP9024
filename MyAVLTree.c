@@ -277,7 +277,7 @@ AVLTree *CreateAVLTree(const char *filename){
 	//pp[0] is the size of the array!!
 	for (int k = 1; k <=pp[0] ; k++ ) {
 		//got the (key,value)!!
-		printf("(%d,%d)\n",*(pp+k),*(pp+k+1));
+		t = InsertNode(tree,*(pp+k),*(pp+k+1));
 		//make sure the loop goes by step 2
 		k++;
 	}
@@ -306,10 +306,6 @@ AVLTree *CreateAVLTree(const char *filename){
 // O(log(n)) 
 // return 0 if item exists in the tree, otherwise return 1.  
 int InsertNode(AVLTree *T, int k, int v){
-	//have to apply rotation after each insertion.
-	//put your code here
-	//serach for the inserting position
-	AVLTreeNode *node;
 	AVLTreeNode *newNode;
 	newNode = newAVLTreeNode(k,v);
 	// empty tree
@@ -318,29 +314,32 @@ int InsertNode(AVLTree *T, int k, int v){
 		T->size++;
 		return 1;
 	}
-	if(Search(T,k,v) != NULL){
-		//existing node
-		return 0;
-	}else{
-		//new node
-		node = BS(T->root,k,v);
-		printf("key of node: %d\n",node->key);
-		if(comparasion(node,k,v)>=0){
-			node->left = newNode;
+	AVLTreeNode *current = T->root;
+	while(1){
+		if(comparasion(current,k,v)>0){
+			if(current->left == NULL){
+				current->left = newNode;
+				break;
+			}else{
+				current = current->left;
+			}
+		}else if(comparasion(current,k,v)==0){
+			printf("existing node!\n");
+			return 0;
 		}else{
-			node->right = newNode;
+			if(current->right == NULL){
+				current->right = newNode;
+				break;
+			}else{
+				current = current->right;
+			}
 		}
-		newNode->parent = node;
-		// increase all the parent's height by 1 after inserting a node
-		increaseH(node);
-		// increase the size of the tree
-		T->size++;
-		// do rotation
-		// rotation(T,newNode);
-		return 1;
 	}
+	T->size++;
+	newNode->parent = current;
+	increaseH(current);
+	return 1;
 }
-
 // put your time complexity for DeleteNode() here
 // int DeleteNode(AVLTree *T, int k, int v)
 // {
