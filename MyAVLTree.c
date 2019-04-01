@@ -71,7 +71,9 @@ int *getKV(char *data_string){
 	char integer[255]="";
 	int len;
 	int j = 0;
-	int values[255];
+
+	int * values = (int *)malloc(255 * sizeof(int));
+
 	for(int i = 0; i < strlen(data_string);i++){
 		if(data_string[i] == '(' || data_string[i] == ')'){
 			if(parenthses == '\0'){
@@ -103,11 +105,7 @@ int *getKV(char *data_string){
 			integer[len+1] = '\0';
 		}
 	}
-	int *pint = values;
-	// for (int i = 0; i < 28; i++ ) {
-  //   printf("aa %d\n",*(pint+i));
-  // }
-	return pint;
+	return values;
 }
 
 // Compare two nodes
@@ -421,7 +419,7 @@ int main(){ int i,j;
  AVLTree *tree1, *tree2, *tree3, *tree4, *tree5, *tree6, *tree7, *tree8;
  AVLTreeNode *node1;
  
- tree1=CreateAVLTree("stdin");
+ tree1=CreateAVLTree("File1.txt");
 //  PrintAVLTree(tree1);
 //  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
