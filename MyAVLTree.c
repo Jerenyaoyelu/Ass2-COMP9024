@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include<stdbool.h>
 #include<string.h>
 #ifndef max
 	#define max( a, b ) ( ((a) > (b)) ? (a) : (b) )
@@ -131,18 +130,8 @@ int comparasion(AVLTreeNode *node,int k, int v){
 	}
 }
 
-// check if the node is in balance
-bool isBalance(AVLTreeNode *newNode){
-	if((newNode->height - newNode->left->height) > 2 || (newNode->height - newNode->right->height) > 2){
-		return false;
-	}else{
-		return true;
-	}
-}
-
-///
-void print2DUtil(AVLTreeNode *root, int space) 
-{ 
+///////////////////////////////////////////////
+void print2DUtil(AVLTreeNode *root, int space) { 
     // Base case 
     if (root == NULL) 
         return; 
@@ -165,26 +154,11 @@ void print2DUtil(AVLTreeNode *root, int space)
 } 
   
 // Wrapper over print2DUtil() 
-void print2D(AVLTreeNode *root) 
-{ 
+void print2D(AVLTreeNode *root) { 
    // Pass initial space count as 0 
    print2DUtil(root, 0); 
 } 
-///
-// // compute height of Tree
-// int TreeHeight(AVLTree *T) {
-//    if (T->root == NULL) {
-//       return 0;
-//    } else {
-//       int lheight = 1 + TreeHeight(left(t));
-//       int rheight = 1 + TreeHeight(right(t));
-//       if (lheight > rheight)
-// 	 return lheight;
-//       else
-// 	 return rheight;
-//    }
-// }
-
+//////////////////////////////////////////////
 
 // increase height
 void increaseH(AVLTreeNode *N){
@@ -205,70 +179,76 @@ void increaseH(AVLTreeNode *N){
 
 //rotation
 //O(log(n))
-void rotation(AVLTree *unbalancedT, AVLTreeNode *insertedN){
-	if(unbalancedT->size > 1){
-		// find x,y,z
-		AVLTreeNode *x=NULL, *y=NULL, *z = NULL;
-		AVLTreeNode *a, *b, *c;
-		AVLTreeNode *current = insertedN;
-		while(1){
-			if(isBalance(current->parent)){
-				current = current->parent;
-			}else{
-				break;
-			}
-		}
-		z = current;
-		if(z->left->height >= z->right->height){
-			y = z->left;
+AVLTree *rotation(AVLTree *unbalancedT, int k,int v){
+	AVLTreeNode *x=NULL, *y=NULL, *z = NULL;
+	AVLTreeNode *a, *b, *c;
+	//starting node
+	z = Search(unbalancedT,k,v);
+	if(z->left->height >= z->right->height){
+		y = z->left;
+	}else{
+		y = z->right;
+	}
+	if(y->left->height >= y->right->height){
+		x = y->left;
+	}else{
+		x = y->right;
+	}
+	// assign a,b,c
+	if(comparasion(x,y->key,y->value)>=0){
+		c = x;
+		a = y;
+		if(comparasion(y,z->key,z->value)>=0){
+			a = z;
+			b = y;
 		}else{
-			y = z->right;
-		}
-		if(y->left->height >= y->right->height){
-			x = y->left;
-		}else{
-			x = y->right;
-		}
-		// assign a,b,c
-		if(comparasion(x,y->key,y->value)>=0){
-			c = x;
-			a = y;
-			if(comparasion(y,z->key,z->value)>=0){
-				a = z;
-				b = y;
+			if(comparasion(x,z->key,z->value)>=0){
+				b = z;
 			}else{
-				if(comparasion(x,z->key,z->value)>=0){
-					b = z;
-				}else{
-					b = x;
-					c = z;
-				}
-			}
-		}else{
-			a = x;
-			c = y;
-			if(comparasion(y,z->key,z->value)>=0){
-				if(comparasion(x,z->key,z->value)>=0){
-					a = z;
-					b = x;
-				}else{
-					b = z;
-				}
-			}else{
-				b = y;
+				b = x;
 				c = z;
 			}
 		}
-		//restructring the tree
-		b->parent = z->parent;
-		if(b->left != NULL){
-			a->right = b->left;
+	}else{
+		a = x;
+		c = y;
+		if(comparasion(y,z->key,z->value)>=0){
+			if(comparasion(x,z->key,z->value)>=0){
+				a = z;
+				b = x;
+			}else{
+				b = z;
+			}
+		}else{
+			b = y;
+			c = z;
 		}
-		b->left = a;
-		if(b->right != NULL){
-			c->left = b->right;
+	}
+	//restructring the tree
+	//height needs to be recalculated!!
+	b->parent = z->parent;
+	if(b->left != NULL){
+		a->right = b->left;
+	}
+	b->left = a;
+	if(b->right != NULL){
+		c->left = b->right;
+	}
+	b->right = c;
+	printf("tt3\n");
+	return unbalancedT;
+}
+
+void rebalance(AVLTree *ubT,int k,int v){
+	AVLTreeNode *crt = Search(ubT,k,v);
+	while(crt!=NULL){
+		printf("tt1\n");
+		if(abs(crt->left->height - crt->right->height) > 1){
+			printf("tt2\n");
+			ubT = rotation(ubT,crt->key,crt->value);
+		}else{
+			crt = crt->parent;
 		}
-		b->right = c;
 	}
 }
 
@@ -383,8 +363,7 @@ int InsertNode(AVLTree *T, int k, int v){
 	T->size++;
 	newNode->parent = current;
 	increaseH(newNode);
-	// problem:
-	// rotation(T,newNode);
+	// rebalance(T,k,v);
 	return 1;
 }
 
@@ -463,7 +442,7 @@ int main(){ int i,j;
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
  print2D(tree1->root);
- FreeAVLTree(tree1);
+//  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
 //  tree2=CreateAVLTree("file1.txt"); 
@@ -473,20 +452,20 @@ int main(){ int i,j;
 //  FreeAVLTree(tree2);
 //  FreeAVLTree(tree3);
 //  //Create tree4 
- tree4=newAVLTree();
- j=InsertNode(tree4, 10, 10);
- for (i=0; i<15; i++)
-  {
-   j=InsertNode(tree4, i, i);
-   if (j==0) printf("(%d, %d) already exists\n", i, i);
-  }
-  PrintAVLTree(tree4);
-	print2D(tree4->root);
-  node1 = Search(tree4,20,20);
-  if (node1!=NULL)
-    printf("key= %d value= %d\n",node1->key,node1->value);
-  else 
-    printf("Key 20 does not exist\n");
+//  tree4=newAVLTree();
+//  j=InsertNode(tree4, 10, 10);
+//  for (i=0; i<15; i++)
+//   {
+//    j=InsertNode(tree4, i, i);
+//    if (j==0) printf("(%d, %d) already exists\n", i, i);
+//   }
+  // PrintAVLTree(tree4);
+	// print2D(tree4->root);
+  // node1 = Search(tree4,20,20);
+  // if (node1!=NULL)
+  //   printf("key= %d value= %d\n",node1->key,node1->value);
+  // else 
+  //   printf("Key 20 does not exist\n");
   
 //   for (i=17; i>0; i--)
 //   {
