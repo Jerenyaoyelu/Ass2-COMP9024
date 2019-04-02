@@ -168,7 +168,7 @@ int calHt(AVLTreeNode *N){
 	return max(calHt(N->left),calHt(N->right))+1;
 }
 
-// recalculate the height
+// recalculate the height starting from this node and all its ancestors
 void increaseH(AVLTreeNode *N){
 	AVLTreeNode *current = N;
 	while(current!=NULL){
@@ -393,11 +393,93 @@ int InsertNode(AVLTree *T, int k, int v){
 	return 1;
 }
 
+
+//get the largest node
+AVLTreeNode *getLgrstN(AVLTreeNode *nd){
+	AVLTreeNode *crnt = nd;
+	while(crnt->right != NULL){
+		crnt = crnt->right;
+	}
+	return crnt;
+}
+
 // put your time complexity for DeleteNode() here
-// int DeleteNode(AVLTree *T, int k, int v)
-// {
-//  // put your code here
-// }
+int DeleteNode(AVLTree *T, int k, int v){
+	AVLTreeNode *dltN = Search(T,k,v);
+	AVLTreeNode *rbStrtN;
+	if(dltN == NULL){
+		return 0;
+	}else{
+		//dltN has no children
+		if(dltN->left == NULL && dltN->right == NULL){
+			//dltN is the root
+			if(dltN == T->root){
+				T->root = NULL;
+			}else{
+				if(dltN == dltN->parent->left){
+				//dltN is in the left
+					dltN->parent->left = NULL;
+				}else{
+					//dltN is in the right
+					dltN->parent->right = NULL;
+				}
+				rbStrtN = dltN->parent;
+				//recalculate the height of all the ancestors
+				increaseH(rbStrtN);
+				dltN->parent = NULL;
+			}
+		}else if(dltN->left != NULL && dltN->right != NULL){
+			//dltN has two children
+			if(dltN == T->root){
+				T->root = dltN->left;
+				dltN->left->parent == NULL;
+			}else{
+				if(dltN == dltN->parent->left){
+					dltN->parent->left = dltN->left;
+				}else{
+					dltN->parent->right = dltN->left;
+				}
+				dltN->left->parent = dltN->parent;
+				dltN->parent = NULL;
+			} 
+			//find the largest node in the left part of dltN
+			AVLTreeNode *RgtMost = getLgrstN(dltN->left);
+			RgtMost->right = dltN->right;
+			dltN->right->parent = RgtMost;
+			dltN->left == NULL;
+			dltN->right == NULL;
+		}else if(dltN->left != NULL){
+			if(dltN == T->root){
+				T->root = dltN->left;
+				dltN->left->parent == NULL;
+			}else{
+				if(dltN == dltN->parent->left){
+					dltN->parent->left = dltN->left;
+				}else{
+					dltN->parent->right = dltN->left;
+				}
+				dltN->left->parent = dltN->parent;
+				dltN->parent = NULL;
+			}
+			dltN->left =NULL;
+		}else{
+			if(dltN == T->root){
+				T->root = dltN->right;
+				dltN->right->parent == NULL;
+			}else{
+				if(dltN == dltN->parent->left){
+					dltN->parent->left = dltN->right;
+				}else{
+					dltN->parent->right = dltN->right;
+				}
+				dltN->right->parent = dltN->parent;
+				dltN->parent = NULL;
+			}
+			dltN->right =NULL;
+		}
+		free(dltN);
+	}
+}
 
 // O(log(n))
 // The tree is empty, so return NULL; return a node if it finds the item, otherwise, return NULL.
