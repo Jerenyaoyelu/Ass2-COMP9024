@@ -53,6 +53,7 @@ AVLTree *newAVLTree(){
 int InsertNode(AVLTree *T, int k, int v);
 AVLTreeNode *Search(AVLTree *T, int k, int v);
 void PrintAVLTree(AVLTree *T);
+int DeleteNode(AVLTree *T, int k, int v);
 
 int convert(char *string){
 	int num = 0;
@@ -345,6 +346,12 @@ AVLTree *CloneAVLTree(AVLTree *T){
 	subR->root = T->root->right;
 	CL = CloneAVLTree(subL);
 	CR = CloneAVLTree(subR);
+	if(CL->root != NULL){
+		CL->root->parent = new->left;
+	}
+	if(CR->root != NULL){
+		CR->root->parent = new->right;
+	}
 	new->left = CL->root;
 	new->right = CR->root;
 	return clone;
@@ -407,11 +414,39 @@ AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 	return uniT;
 }
  
-// // put your time complexity for ALVTreesIntersection() here
-// AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
-// {
-// 	 //put your code here
-// }
+// put your time complexity for ALVTreesIntersection() here
+AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
+{
+	int *values = getAllN(T2);
+	AVLTree *intsctT = newAVLTree();
+	for(int j = 1; j <= values[0];j++){
+		// printf("vv %d,%d\n",values[j],values[j+1]);
+		AVLTreeNode *t = Search(T1,values[j],values[j+1]);
+		if(t != NULL){
+			int temp;
+			temp = InsertNode(intsctT,values[j],values[j+1]);
+		}
+		j++;
+	}
+	// AVLTree *intsctT = CloneAVLTree(T2);
+	// print2D(intsctT->root);
+	// int *values = getAllN(T2);
+	// for(int j = 1; j <= values[0];j++){
+	// 	// printf("vv %d,%d\n",values[j],values[j+1]);
+	// 	AVLTreeNode *t = Search(T1,values[j],values[j+1]);
+	// 	printf("v %d,%d\n",values[j],values[j+1]);
+	// 	if(t == NULL){
+	// 		int temp;
+	// 		printf("%d,%d\n",values[j],values[j+1]);
+	// 		temp = DeleteNode(intsctT,values[j],values[j+1]);
+	// 		print2D(intsctT->root);
+	// 	}else{
+	// 		printf("t %d,%d\n",t->key,t->value);
+	// 	}
+	// 	j++;
+	// }
+	return intsctT;
+}
 
 // O(log(n)) 
 // return 0 if item exists in the tree, otherwise return 1.  
@@ -506,6 +541,7 @@ int DeleteNode(AVLTree *T, int k, int v){
 			dltN->right = NULL;
 			rbStrtN = RgtMost;
 		}else if(dltN->left != NULL){
+			//dltN has left child
 			if(dltN == T->root){
 				T->root = dltN->left;
 				dltN->left->parent = NULL;
@@ -521,6 +557,7 @@ int DeleteNode(AVLTree *T, int k, int v){
 			rbStrtN = dltN->left->parent;
 			dltN->left =NULL;
 		}else{
+			//dltN has right child
 			if(dltN == T->root){
 				T->root = dltN->right;
 				dltN->right->parent = NULL;
@@ -611,47 +648,40 @@ int main(){ int i,j;
  AVLTree *tree1, *tree2, *tree3, *tree4, *tree5, *tree6, *tree7, *tree8;
  AVLTreeNode *node1;
  
-//  tree1=CreateAVLTree("File1.txt");
-//  PrintAVLTree(tree1);
-// //  printf("%d\n",calHt(tree1->root));
-//  print2D(tree1->root);
-//  FreeAVLTree(tree1);
+ tree1=CreateAVLTree("File1.txt");
+ PrintAVLTree(tree1);
+ FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
-//  tree2=CreateAVLTree("file1.txt"); 
-//  PrintAVLTree(tree2);
-//  print2D(tree2->root);
-//  tree3=CloneAVLTree(tree2);
-//  PrintAVLTree(tree3);
-//  print2D(tree3->root);
-//  FreeAVLTree(tree2);
-//  FreeAVLTree(tree3);
+ tree2=CreateAVLTree("file1.txt"); 
+ PrintAVLTree(tree2);
+ tree3=CloneAVLTree(tree2);
+ PrintAVLTree(tree3);
+ FreeAVLTree(tree2);
+ FreeAVLTree(tree3);
  //Create tree4 
-//  tree4=newAVLTree();
-//  j=InsertNode(tree4, 10, 10);
-//  for (i=0; i<15; i++)
-//   {
-//    j=InsertNode(tree4, i, i);
-//    if (j==0) printf("(%d, %d) already exists\n", i, i);
-//   }
-//   PrintAVLTree(tree4);
-// 	print2D(tree4->root);
-//   node1 = Search(tree4,20,20);
-//   if (node1!=NULL)
-//     printf("key= %d value= %d\n",node1->key,node1->value);
-//   else 
-//     printf("Key 20 does not exist\n");
+ tree4=newAVLTree();
+ j=InsertNode(tree4, 10, 10);
+ for (i=0; i<15; i++)
+  {
+   j=InsertNode(tree4, i, i);
+   if (j==0) printf("(%d, %d) already exists\n", i, i);
+  }
+  PrintAVLTree(tree4);
+  node1 = Search(tree4,20,20);
+  if (node1!=NULL)
+    printf("key= %d value= %d\n",node1->key,node1->value);
+  else 
+    printf("Key 20 does not exist\n");
   
-//   for (i=17; i>0; i--)
-//   {
-//     j=DeleteNode(tree4, i, i);
-// 	if (j==0) 
-// 	  printf("Key %d does not exist\n",i);  
-//     PrintAVLTree(tree4);
-// 		print2D(tree4->root);
-//   }
-// 	// printf("size:%d\n",tree4->size);
-//  FreeAVLTree(tree4);
+  for (i=17; i>0; i--)
+  {
+    j=DeleteNode(tree4, i, i);
+	if (j==0) 
+	  printf("Key %d does not exist\n",i);  
+    PrintAVLTree(tree4);
+  }
+ FreeAVLTree(tree4);
  //Create tree5
  tree5=newAVLTree();
  j=InsertNode(tree5, 6, 25);
@@ -660,8 +690,7 @@ int main(){ int i,j;
  j=InsertNode(tree5, 6, 20);
  j=InsertNode(tree5, 9, 25);
  j=InsertNode(tree5, 10, 25);
-//  printf("t5\n");
-//  PrintAVLTree(tree5);
+ PrintAVLTree(tree5);
  //Create tree6
  tree6=newAVLTree();
  j=InsertNode(tree6, 6, 25);
@@ -670,14 +699,12 @@ int main(){ int i,j;
  j=InsertNode(tree6, 6, 20);
  j=InsertNode(tree6, 8, 35);
  j=InsertNode(tree6, 10, 25);
-//  printf("t6\n");
-//  PrintAVLTree(tree6);
-//  printf("\n");
-//  tree7=AVLTreesIntersection(tree5, tree6);
-// printf("t8\n");
+ PrintAVLTree(tree6);
+ tree7=AVLTreesIntersection(tree5, tree6);
+//  print2D(tree7->root);
  tree8=AVLTreesUnion(tree5,tree6);
-//  PrintAVLTree(tree7);
+ PrintAVLTree(tree7);
  PrintAVLTree(tree8);
- print2D(tree8->root);
- return 0; 
+	// print2D(tree8->root);
+ 	return 0; 
 }
