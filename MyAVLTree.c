@@ -55,6 +55,7 @@ AVLTreeNode *Search(AVLTree *T, int k, int v);
 void PrintAVLTree(AVLTree *T);
 int DeleteNode(AVLTree *T, int k, int v);
 
+//O(n)
 int convert(char *string){
 	int num = 0;
 	int pre = 1;
@@ -71,6 +72,7 @@ int convert(char *string){
 	return num;
 }
 
+//O(n^2)
 int *getKV(char *data_string){
 	char parenthses = '\0';
 	char integer[255]="";
@@ -113,6 +115,7 @@ int *getKV(char *data_string){
 	return values;
 }
 
+//O(1)
 // Compare two nodes
 // returns 1 when the about-to-insert node is smaller; 
 // returns 0 when they are equal; returns -1 when he about-to-insert node is bigger.
@@ -132,36 +135,7 @@ int comparasion(AVLTreeNode *node,int k, int v){
 	}
 }
 
-///////////////////////////////////////////////
-void print2DUtil(AVLTreeNode *root, int space) { 
-    // Base case 
-    if (root == NULL) 
-        return; 
-  
-    // Increase distance between levels 
-    space += COUNT; 
-  
-    // Process right child first 
-    print2DUtil(root->right, space); 
-  
-    // Print current node after space 
-    // count 
-    printf("\n"); 
-    for (int i = COUNT; i < space; i++) 
-        printf(" "); 
-    printf("(%d,%d)\n", root->key,root->value); 
-  
-    // Process left child 
-    print2DUtil(root->left, space); 
-} 
-  
-// Wrapper over print2DUtil() 
-void print2D(AVLTreeNode *root) { 
-   // Pass initial space count as 0 
-   print2DUtil(root, 0); 
-} 
-//////////////////////////////////////////////
-
+//O(n)
 //calculate height
 int calHt(AVLTreeNode *N){
 	if(N == NULL){
@@ -170,6 +144,7 @@ int calHt(AVLTreeNode *N){
 	return max(calHt(N->left),calHt(N->right))+1;
 }
 
+// O(nlog(n))
 // recalculate the height starting from this node and all its ancestors
 void increaseH(AVLTreeNode *N){
 	AVLTreeNode *current = N;
@@ -179,8 +154,8 @@ void increaseH(AVLTreeNode *N){
 	}
 }
 
-// right rotation
 // O(log(n))
+// right rotation
 void Rrotation(AVLTree *uT, AVLTreeNode *un){
 	AVLTreeNode *b = un->left;
 	// break and reconnect
@@ -207,6 +182,7 @@ void Rrotation(AVLTree *uT, AVLTreeNode *un){
 	increaseH(un);
 }
 
+// O(log(n))
 //left rotation
 void Lrotation(AVLTree *uT, AVLTreeNode *un){
 	AVLTreeNode *b = un->right;
@@ -234,6 +210,7 @@ void Lrotation(AVLTree *uT, AVLTreeNode *un){
 	increaseH(un);
 }
 
+// O(1)
 //get difference of heights of its chidren
 int difference(AVLTreeNode *N){
 	if(N->left !=NULL && N->right != NULL){
@@ -247,6 +224,7 @@ int difference(AVLTreeNode *N){
 	}
 }
 
+// O(log(n)^2)
 //rebalance the tree
 void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 	AVLTreeNode *crt = newN;
@@ -280,6 +258,7 @@ void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 	}
 }
 
+// O()
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
  // create an empty tree
@@ -329,7 +308,7 @@ AVLTree *CreateAVLTree(const char *filename){
 	return tree;
 }
 
-//O(log(n))
+//O(n)
 AVLTree *CloneAVLTree(AVLTree *T){
 	AVLTree *clone, *subL, *subR, *CL, *CR;
 	int t;
@@ -357,6 +336,7 @@ AVLTree *CloneAVLTree(AVLTree *T){
 	return clone;
 }
  
+// O(n)
 //concat two int arrays
 void concatIntA(int array1[], int array2[]){
 	int size1 = array1[0];
@@ -369,6 +349,7 @@ void concatIntA(int array1[], int array2[]){
 	}
 }
 
+// O(nlog(n))
 //get all nodes items from a tree
 int *getAllN(AVLTree *T){
 	int * values = (int *)malloc(255 * sizeof(int));
@@ -393,7 +374,7 @@ int *getAllN(AVLTree *T){
 	return values;
 }
 
-// put your time complexity for ALVTreesUNion() here
+// O()
 AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 {
 	AVLTree *uniT = CloneAVLTree(T1);
@@ -413,8 +394,7 @@ AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 	}
 	return uniT;
 }
- 
-// put your time complexity for ALVTreesIntersection() here
+// O() 
 AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 {
 	int *values = getAllN(T2);
@@ -448,7 +428,7 @@ AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 	return intsctT;
 }
 
-// O(log(n)) 
+// O(nlog(n)) 
 // return 0 if item exists in the tree, otherwise return 1.  
 int InsertNode(AVLTree *T, int k, int v){
 	AVLTreeNode *newNode;
@@ -486,7 +466,7 @@ int InsertNode(AVLTree *T, int k, int v){
 	return 1;
 }
 
-
+// O(log(n))
 //get the largest node
 AVLTreeNode *getLgrstN(AVLTreeNode *nd){
 	AVLTreeNode *crnt = nd;
@@ -496,7 +476,7 @@ AVLTreeNode *getLgrstN(AVLTreeNode *nd){
 	return crnt;
 }
 
-// put your time complexity for DeleteNode() here
+// O(nlog(n))
 int DeleteNode(AVLTree *T, int k, int v){
 	AVLTreeNode *dltN = Search(T,k,v);
 	AVLTreeNode *rbStrtN;
