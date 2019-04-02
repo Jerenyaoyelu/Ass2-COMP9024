@@ -87,7 +87,7 @@ AVLTreeNode *Search(AVLTree *T, int k, int v);
 void PrintAVLTree(AVLTree *T);
 int DeleteNode(AVLTree *T, int k, int v);
 
-//O(n)
+//O(1)
 int convert(char *string){
 	int num = 0;
 	int pre = 1;
@@ -104,7 +104,7 @@ int convert(char *string){
 	return num;
 }
 
-//O(n^2)
+//O(n)
 int *getKV(char *data_string){
 	char parenthses = '\0';
 	char integer[255]="";
@@ -272,7 +272,7 @@ void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 	}
 }
 
-// O()
+// O(nlog(n))
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
  // create an empty tree
