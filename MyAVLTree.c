@@ -40,6 +40,38 @@ AVLTreeNode *newAVLTreeNode(int k, int v ){
 	return new;
 }
 
+
+///////////////////////////////////////////////
+void print2DUtil(AVLTreeNode *root, int space) { 
+    // Base case 
+    if (root == NULL) 
+        return; 
+
+    // Increase distance between levels 
+    space += COUNT; 
+
+    // Process right child first 
+    print2DUtil(root->right, space); 
+
+    // Print current node after space 
+    // count 
+    printf("\n"); 
+    for (int i = COUNT; i < space; i++) 
+        printf(" "); 
+    printf("(%d,%d)\n", root->key,root->value); 
+
+    // Process left child 
+    print2DUtil(root->left, space); 
+} 
+
+// Wrapper over print2DUtil() 
+void print2D(AVLTreeNode *root) { 
+   // Pass initial space count as 0 
+   print2DUtil(root, 0); 
+} 
+//////////////////////////////////////////////
+
+
 // create a new empty avl tree
 AVLTree *newAVLTree(){
 	AVLTree *T;
@@ -135,26 +167,25 @@ int comparasion(AVLTreeNode *node,int k, int v){
 	}
 }
 
-//O(n)
-//calculate height
-int calHt(AVLTreeNode *N){
+//O(1)
+int Ht(AVLTreeNode *N){
 	if(N == NULL){
 		return -1;
 	}
-	return max(calHt(N->left),calHt(N->right))+1;
-}
-
-// O(nlog(n))
-// recalculate the height starting from this node and all its ancestors
-void increaseH(AVLTreeNode *N){
-	AVLTreeNode *current = N;
-	while(current!=NULL){
-		current -> height = calHt(current);
-		current = current->parent;
-	}
+	return N->height;
 }
 
 // O(log(n))
+// // recalculate the height starting from this node and all its ancestors
+// void increaseH(AVLTreeNode *N){
+// 	AVLTreeNode *current = N;
+// 	while(current!=NULL){
+// 		current -> height = max(Ht(current->left),Ht(current->right))+1;
+// 		current = current->parent;
+// 	}
+// }
+
+// O(1)
 // right rotation
 void Rrotation(AVLTree *uT, AVLTreeNode *un){
 	AVLTreeNode *b = un->left;
@@ -178,11 +209,11 @@ void Rrotation(AVLTree *uT, AVLTreeNode *un){
 	b->right = un;
 	un->parent = b;
 	//recalculate the height
-	increaseH(b);
-	increaseH(un);
+	// increaseH(b);
+	// increaseH(un);
 }
 
-// O(log(n))
+// O(1)
 //left rotation
 void Lrotation(AVLTree *uT, AVLTreeNode *un){
 	AVLTreeNode *b = un->right;
@@ -206,8 +237,8 @@ void Lrotation(AVLTree *uT, AVLTreeNode *un){
 	b->left = un;
 	un->parent = b;
 	//recalculate the height
-	increaseH(b);
-	increaseH(un);
+	// increaseH(b);
+	// increaseH(un);
 }
 
 // O(1)
@@ -224,7 +255,7 @@ int difference(AVLTreeNode *N){
 	}
 }
 
-// O(log(n)^2)
+// O(log(n))
 //rebalance the tree
 void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 	AVLTreeNode *crt = newN;
@@ -254,6 +285,7 @@ void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 				Rrotation(ubT,crt);
 			}
 		}
+		crt -> height = max(Ht(crt->left),Ht(crt->right))+1;
 		crt = crt->parent;
 	}
 }
@@ -304,7 +336,6 @@ AVLTree *CreateAVLTree(const char *filename){
 		//make sure the loop goes by step 2
 		k++;
 	}
-	// printf("size:%d\n",tree->size);
 	return tree;
 }
 
@@ -428,7 +459,7 @@ AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 	return intsctT;
 }
 
-// O(nlog(n)) 
+// O(log(n)) 
 // return 0 if item exists in the tree, otherwise return 1.  
 int InsertNode(AVLTree *T, int k, int v){
 	AVLTreeNode *newNode;
@@ -458,10 +489,12 @@ int InsertNode(AVLTree *T, int k, int v){
 				current = current->right;
 			}
 		}
+		current -> height = max(Ht(current->left),Ht(current->right))+1;
 	}
 	T->size++;
 	newNode->parent = current;
-	increaseH(newNode);
+	// T->root->height = max(T->root->left->height,T->root->right->height) + 1;
+	// increaseH(newNode);
 	rebalance(T,newNode);
 	return 1;
 }
@@ -476,7 +509,7 @@ AVLTreeNode *getLgrstN(AVLTreeNode *nd){
 	return crnt;
 }
 
-// O(nlog(n))
+// O(log(n))
 int DeleteNode(AVLTree *T, int k, int v){
 	AVLTreeNode *dltN = Search(T,k,v);
 	AVLTreeNode *rbStrtN;
@@ -556,8 +589,9 @@ int DeleteNode(AVLTree *T, int k, int v){
 		free(dltN);
 		T->size--;
 	}
-	//recalculate the height of all the ancestors
-	increaseH(rbStrtN);
+	// //recalculate the height of all the ancestors
+	// increaseH(rbStrtN);
+	printf("ww\n"); 
 	rebalance(T,rbStrtN);
 	return 1;
 }
@@ -630,6 +664,7 @@ int main(){ int i,j;
  
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
+ print2D(tree1->root);
  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
@@ -639,29 +674,29 @@ int main(){ int i,j;
  PrintAVLTree(tree3);
  FreeAVLTree(tree2);
  FreeAVLTree(tree3);
- //Create tree4 
- tree4=newAVLTree();
- j=InsertNode(tree4, 10, 10);
- for (i=0; i<15; i++)
-  {
-   j=InsertNode(tree4, i, i);
-   if (j==0) printf("(%d, %d) already exists\n", i, i);
-  }
-  PrintAVLTree(tree4);
-  node1 = Search(tree4,20,20);
-  if (node1!=NULL)
-    printf("key= %d value= %d\n",node1->key,node1->value);
-  else 
-    printf("Key 20 does not exist\n");
+//  //Create tree4 
+//  tree4=newAVLTree();
+//  j=InsertNode(tree4, 10, 10);
+//  for (i=0; i<15; i++)
+//   {
+//    j=InsertNode(tree4, i, i);
+//    if (j==0) printf("(%d, %d) already exists\n", i, i);
+//   }
+//   PrintAVLTree(tree4);
+//   node1 = Search(tree4,20,20);
+//   if (node1!=NULL)
+//     printf("key= %d value= %d\n",node1->key,node1->value);
+//   else 
+//     printf("Key 20 does not exist\n");
   
-  for (i=17; i>0; i--)
-  {
-    j=DeleteNode(tree4, i, i);
-	if (j==0) 
-	  printf("Key %d does not exist\n",i);  
-    PrintAVLTree(tree4);
-  }
- FreeAVLTree(tree4);
+//   for (i=17; i>0; i--)
+//   {
+//     j=DeleteNode(tree4, i, i);
+// 	if (j==0) 
+// 	  printf("Key %d does not exist\n",i); 
+//     // PrintAVLTree(tree4);
+//   }
+//  FreeAVLTree(tree4);
  //Create tree5
  tree5=newAVLTree();
  j=InsertNode(tree5, 6, 25);
@@ -681,10 +716,10 @@ int main(){ int i,j;
  j=InsertNode(tree6, 10, 25);
  PrintAVLTree(tree6);
  tree7=AVLTreesIntersection(tree5, tree6);
-//  print2D(tree7->root);
+ print2D(tree7->root);
  tree8=AVLTreesUnion(tree5,tree6);
  PrintAVLTree(tree7);
  PrintAVLTree(tree8);
-	// print2D(tree8->root);
+	print2D(tree8->root);
  	return 0; 
 }
