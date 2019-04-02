@@ -52,6 +52,7 @@ AVLTree *newAVLTree(){
 // declaration
 int InsertNode(AVLTree *T, int k, int v);
 AVLTreeNode *Search(AVLTree *T, int k, int v);
+void PrintAVLTree(AVLTree *T);
 
 int convert(char *string){
 	int num = 0;
@@ -327,9 +328,8 @@ AVLTree *CreateAVLTree(const char *filename){
 	return tree;
 }
 
-//put your time complexity analysis for CloneAVLTree() here
-AVLTree *CloneAVLTree(AVLTree *T)
-{
+//O(log(n))
+AVLTree *CloneAVLTree(AVLTree *T){
 	AVLTree *clone, *subL, *subR, *CL, *CR;
 	int t;
 	if(T->root == NULL){
@@ -350,11 +350,62 @@ AVLTree *CloneAVLTree(AVLTree *T)
 	return clone;
 }
  
+//concat two int arrays
+void concatIntA(int array1[], int array2[]){
+	int size1 = array1[0];
+	if(array2[0]>0){
+		int size2 = array2[0];
+		for(int i = 1; i <= size2; i++){
+			array1[size1+i] = array2[i];
+		}
+		array1[0] = size1 + size2;
+	}
+}
+
+//get all nodes items from a tree
+int *getAllN(AVLTree *T){
+	int * values = (int *)malloc(255 * sizeof(int));
+	int *vL, *vR;
+	AVLTreeNode *current = T->root;
+	AVLTree *subL, *subR;
+	subL = newAVLTree();
+	subR = newAVLTree();
+	values[0] = 2;
+	values[1] = current->key;
+	values[2] = current->value;
+	if(current->left != NULL){
+		subL ->root = current->left;
+		vL = getAllN(subL);
+		concatIntA(values,vL);
+	}
+	if(current->right != NULL){
+		subR ->root = current->right;
+		vR = getAllN(subR);
+		concatIntA(values,vR);
+	}
+	return values;
+}
+
 // put your time complexity for ALVTreesUNion() here
-// AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
-// {
-// 	//put your code here
-// }
+AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
+{
+	AVLTree *uniT = CloneAVLTree(T1);
+	int *values = getAllN(T2);
+	// printf("size %d\n",values[0]);
+	// for(int j = 1; j <= values[0];j++){
+	// 	printf("aa(%d,%d)\n",values[j],values[j+1]);
+	// 	j++;
+	// }
+	for(int j = 1; j <= values[0];j++){
+		AVLTreeNode *t = Search(uniT,values[j],values[j+1]);
+		if(t == NULL){
+			int temp;
+			temp = InsertNode(uniT,values[j],values[j+1]);
+		}
+		j++;
+	}
+	return uniT;
+}
  
 // // put your time complexity for ALVTreesIntersection() here
 // AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
@@ -567,14 +618,14 @@ int main(){ int i,j;
 //  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
- tree2=CreateAVLTree("file1.txt"); 
- PrintAVLTree(tree2);
+//  tree2=CreateAVLTree("file1.txt"); 
+//  PrintAVLTree(tree2);
 //  print2D(tree2->root);
- tree3=CloneAVLTree(tree2);
- PrintAVLTree(tree3);
+//  tree3=CloneAVLTree(tree2);
+//  PrintAVLTree(tree3);
 //  print2D(tree3->root);
- FreeAVLTree(tree2);
- FreeAVLTree(tree3);
+//  FreeAVLTree(tree2);
+//  FreeAVLTree(tree3);
  //Create tree4 
 //  tree4=newAVLTree();
 //  j=InsertNode(tree4, 10, 10);
@@ -601,27 +652,32 @@ int main(){ int i,j;
 //   }
 // 	// printf("size:%d\n",tree4->size);
 //  FreeAVLTree(tree4);
-//  //Create tree5
-//  tree5=newAVLTree();
-//  j=InsertNode(tree5, 6, 25);
-//  j=InsertNode(tree5, 6, 10);
-//  j=InsertNode(tree5, 6, 12);
-//  j=InsertNode(tree5, 6, 20);
-//  j=InsertNode(tree5, 9, 25);
-//  j=InsertNode(tree5, 10, 25);
+ //Create tree5
+ tree5=newAVLTree();
+ j=InsertNode(tree5, 6, 25);
+ j=InsertNode(tree5, 6, 10);
+ j=InsertNode(tree5, 6, 12);
+ j=InsertNode(tree5, 6, 20);
+ j=InsertNode(tree5, 9, 25);
+ j=InsertNode(tree5, 10, 25);
+//  printf("t5\n");
 //  PrintAVLTree(tree5);
-//  //Create tree6
-//  tree6=newAVLTree();
-//  j=InsertNode(tree6, 6, 25);
-//  j=InsertNode(tree6, 5, 10);
-//  j=InsertNode(tree6, 6, 12);
-//  j=InsertNode(tree6, 6, 20);
-//  j=InsertNode(tree6, 8, 35);
-//  j=InsertNode(tree6, 10, 25);
+ //Create tree6
+ tree6=newAVLTree();
+ j=InsertNode(tree6, 6, 25);
+ j=InsertNode(tree6, 5, 10);
+ j=InsertNode(tree6, 6, 12);
+ j=InsertNode(tree6, 6, 20);
+ j=InsertNode(tree6, 8, 35);
+ j=InsertNode(tree6, 10, 25);
+//  printf("t6\n");
 //  PrintAVLTree(tree6);
+//  printf("\n");
 //  tree7=AVLTreesIntersection(tree5, tree6);
-//  tree8=AVLTreesUnion(tree5,tree6);
+// printf("t8\n");
+ tree8=AVLTreesUnion(tree5,tree6);
 //  PrintAVLTree(tree7);
-//  PrintAVLTree(tree8);
+ PrintAVLTree(tree8);
+ print2D(tree8->root);
  return 0; 
 }
