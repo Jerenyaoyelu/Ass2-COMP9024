@@ -424,15 +424,13 @@ int DeleteNode(AVLTree *T, int k, int v){
 					dltN->parent->right = NULL;
 				}
 				rbStrtN = dltN->parent;
-				//recalculate the height of all the ancestors
-				increaseH(rbStrtN);
 				dltN->parent = NULL;
 			}
 		}else if(dltN->left != NULL && dltN->right != NULL){
 			//dltN has two children
 			if(dltN == T->root){
 				T->root = dltN->left;
-				dltN->left->parent == NULL;
+				dltN->left->parent = NULL;
 			}else{
 				if(dltN == dltN->parent->left){
 					dltN->parent->left = dltN->left;
@@ -446,12 +444,13 @@ int DeleteNode(AVLTree *T, int k, int v){
 			AVLTreeNode *RgtMost = getLgrstN(dltN->left);
 			RgtMost->right = dltN->right;
 			dltN->right->parent = RgtMost;
-			dltN->left == NULL;
-			dltN->right == NULL;
+			dltN->left = NULL;
+			dltN->right = NULL;
+			rbStrtN = RgtMost;
 		}else if(dltN->left != NULL){
 			if(dltN == T->root){
 				T->root = dltN->left;
-				dltN->left->parent == NULL;
+				dltN->left->parent = NULL;
 			}else{
 				if(dltN == dltN->parent->left){
 					dltN->parent->left = dltN->left;
@@ -461,11 +460,12 @@ int DeleteNode(AVLTree *T, int k, int v){
 				dltN->left->parent = dltN->parent;
 				dltN->parent = NULL;
 			}
+			rbStrtN = dltN->left->parent;
 			dltN->left =NULL;
 		}else{
 			if(dltN == T->root){
 				T->root = dltN->right;
-				dltN->right->parent == NULL;
+				dltN->right->parent = NULL;
 			}else{
 				if(dltN == dltN->parent->left){
 					dltN->parent->left = dltN->right;
@@ -475,10 +475,15 @@ int DeleteNode(AVLTree *T, int k, int v){
 				dltN->right->parent = dltN->parent;
 				dltN->parent = NULL;
 			}
-			dltN->right =NULL;
+			rbStrtN = dltN->right->parent;
+			dltN->right = NULL;
 		}
 		free(dltN);
 	}
+	//recalculate the height of all the ancestors
+	increaseH(rbStrtN);
+	rebalance(T,rbStrtN);
+	return 1;
 }
 
 // O(log(n))
@@ -548,9 +553,9 @@ int main(){ int i,j;
  AVLTreeNode *node1;
  
  tree1=CreateAVLTree("File1.txt");
- PrintAVLTree(tree1);
-//  printf("%d\n",calHt(tree1->root));
- print2D(tree1->root);
+//  PrintAVLTree(tree1);
+// //  printf("%d\n",calHt(tree1->root));
+//  print2D(tree1->root);
 //  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
@@ -560,29 +565,30 @@ int main(){ int i,j;
 //  PrintAVLTree(tree3);
 //  FreeAVLTree(tree2);
 //  FreeAVLTree(tree3);
-//  //Create tree4 
-//  tree4=newAVLTree();
-//  j=InsertNode(tree4, 10, 10);
-//  for (i=0; i<15; i++)
-//   {
-//    j=InsertNode(tree4, i, i);
-//    if (j==0) printf("(%d, %d) already exists\n", i, i);
-//   }
-  // PrintAVLTree(tree4);
-	// print2D(tree4->root);
-  // node1 = Search(tree4,20,20);
-  // if (node1!=NULL)
-  //   printf("key= %d value= %d\n",node1->key,node1->value);
-  // else 
-  //   printf("Key 20 does not exist\n");
+ //Create tree4 
+ tree4=newAVLTree();
+ j=InsertNode(tree4, 10, 10);
+ for (i=0; i<15; i++)
+  {
+   j=InsertNode(tree4, i, i);
+   if (j==0) printf("(%d, %d) already exists\n", i, i);
+  }
+  PrintAVLTree(tree4);
+	print2D(tree4->root);
+  node1 = Search(tree4,20,20);
+  if (node1!=NULL)
+    printf("key= %d value= %d\n",node1->key,node1->value);
+  else 
+    printf("Key 20 does not exist\n");
   
-//   for (i=17; i>0; i--)
-//   {
-//     j=DeleteNode(tree4, i, i);
-// 	if (j==0) 
-// 	  printf("Key %d does not exist\n",i);  
-//     PrintAVLTree(tree4);
-//   }
+  for (i=17; i>0; i--)
+  {
+    j=DeleteNode(tree4, i, i);
+	if (j==0) 
+	  printf("Key %d does not exist\n",i);  
+    PrintAVLTree(tree4);
+		print2D(tree4->root);
+  }
 //  FreeAVLTree(tree4);
 //  //Create tree5
 //  tree5=newAVLTree();
