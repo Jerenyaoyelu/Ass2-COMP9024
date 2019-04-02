@@ -479,6 +479,7 @@ int DeleteNode(AVLTree *T, int k, int v){
 			dltN->right = NULL;
 		}
 		free(dltN);
+		T->size--;
 	}
 	//recalculate the height of all the ancestors
 	increaseH(rbStrtN);
@@ -589,6 +590,7 @@ int main(){ int i,j;
     PrintAVLTree(tree4);
 		print2D(tree4->root);
   }
+	printf("size:%d\n",tree4->size);
 //  FreeAVLTree(tree4);
 //  //Create tree5
 //  tree5=newAVLTree();
