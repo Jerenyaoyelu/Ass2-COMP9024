@@ -332,13 +332,11 @@ AVLTree *CloneAVLTree(AVLTree *T){
 
 // O(n)
 //get all nodes items from a tree
-int *getAllN(AVLTree *T){
+void getAllN(AVLTree *T,int *values){
 	//pseudo stack (array of pointers)
 	AVLTreeNode * stack[T->size];
-	int * values = (int *)malloc(255 * sizeof(int));
-	int j = 0;
 	int size_of_stack = 0;
-	int i = 1;
+	int i = values[0]+1;
 	AVLTreeNode *crt = T->root;
 	while(1){
 		//push the node
@@ -360,39 +358,20 @@ int *getAllN(AVLTree *T){
 			break;
 		}
 	}
-	// int * values = (int *)malloc(255 * sizeof(int));
-	// int *vL, *vR;
-	// AVLTreeNode *current = T->root;
-	// AVLTree *subL, *subR;
-	// subL = newAVLTree();
-	// subR = newAVLTree();
-	// values[0] = 2;
-	// values[1] = current->key;
-	// values[2] = current->value;
-	// if(current->left != NULL){
-	// 	subL ->root = current->left;
-	// 	vL = getAllN(subL);
-	// 	concatIntA(values,vL);
-	// }
-	// if(current->right != NULL){
-	// 	subR ->root = current->right;
-	// 	vR = getAllN(subR);
-	// 	concatIntA(values,vR);
-	// }
-	return values;
 }
 
 // O((m+n)log(m+n))
 AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 {
-	AVLTree *uniT = CloneAVLTree(T1);
-	int *values = getAllN(T2);
+	int *values = (int *)malloc(255 * sizeof(int));
+	values[0] = 0;
+	//combine all iterms into one int array
+	getAllN(T1,values);
+	getAllN(T2,values);
+	AVLTree *uniT = newAVLTree();
 	for(int j = 1; j <= values[0];j++){
-		AVLTreeNode *t = Search(uniT,values[j],values[j+1]);
-		if(t == NULL){
-			int temp;
-			temp = InsertNode(uniT,values[j],values[j+1]);
-		}
+		int temp;
+		temp = InsertNode(uniT,values[j],values[j+1]);
 		j++;
 	}
 	return uniT;
@@ -400,7 +379,11 @@ AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 // O(m+n+klog(k)) 
 AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 {
-	int *values = getAllN(T2);
+	int *values = (int *)malloc(255 * sizeof(int));
+	values[0] = 0;
+	//combine all iterms into one int array
+	// getAllN(T1,values);
+	getAllN(T2,values);
 	AVLTree *insrtT = newAVLTree();
 	for(int j = 1; j <= values[0];j++){
 		// printf("vv %d,%d\n",values[j],values[j+1]);
