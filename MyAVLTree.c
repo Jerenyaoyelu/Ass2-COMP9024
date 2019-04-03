@@ -240,36 +240,6 @@ void rebalance(AVLTree *ubT,AVLTreeNode *newN){
 	}
 }
 
-///////////////////////////////////////////////
-void print2DUtil(AVLTreeNode *root, int space) { 
-    // Base case 
-    if (root == NULL) 
-        return; 
-
-    // Increase distance between levels 
-    space += COUNT; 
-
-    // Process right child first 
-    print2DUtil(root->right, space); 
-
-    // Print current node after space 
-    // count 
-    printf("\n"); 
-    for (int i = COUNT; i < space; i++) 
-        printf(" "); 
-    printf("(%d,%d)\n", root->key,root->value); 
-
-    // Process left child 
-    print2DUtil(root->left, space); 
-} 
-
-// Wrapper over print2DUtil() 
-void print2D(AVLTreeNode *root) { 
-   // Pass initial space count as 0 
-   print2DUtil(root, 0); 
-} 
-//////////////////////////////////////////////
-
 // O(nlog(n))
 // put your time complexity analysis of CreateAVLTree() here
 AVLTree *CreateAVLTree(const char *filename){
@@ -396,12 +366,13 @@ AVLTree *AVLTreesUnion(AVLTree *T1, AVLTree *T2)
 }
 
 // O(m+n)
-// get intersection of two int arrays
+// get intersection of two sorted int arrays
 int *getIntersction(int *valuesofT1, int *valuesofT2){
 	int *valuesofinsrtT = (int *)malloc(255 * sizeof(int));
 	int m = valuesofT1[0], n = valuesofT2[0];
 	int j = 1;
 	int k = 1;
+	// get intersection
 	for(int i = 1; i <= m; i=i+2){
 		if(comparasion(valuesofT1[i],valuesofT1[i+1],valuesofT2[j],valuesofT2[j+1])==0){
 			valuesofinsrtT[k] = valuesofT1[i];
@@ -435,10 +406,13 @@ AVLTree *AVLTreesIntersection(AVLTree *T1, AVLTree *T2)
 	int *valuesofT1 = (int *)malloc(255 * sizeof(int));
 	int *valuesofT2 = (int *)malloc(255 * sizeof(int));
 	int *valuesofinsrtT = (int *)malloc(255 * sizeof(int));
+	//get all vaules of two trees separately
 	getAllN(T1,valuesofT1);
 	getAllN(T2,valuesofT2);
+	// get the intersection of these two sorted int arrays
 	valuesofinsrtT = getIntersction(valuesofT1,valuesofT2);
 	AVLTree *insrtT = newAVLTree();
+	// create the intersected tree
 	for(int k = 1; k <= valuesofinsrtT[0];k = k+2){
 			int temp;
 			temp = InsertNode(insrtT,valuesofinsrtT[k],valuesofinsrtT[k+1]);
@@ -649,14 +623,12 @@ int main(){ int i,j;
  
  tree1=CreateAVLTree("File1.txt");
  PrintAVLTree(tree1);
- print2D(tree1->root);
  FreeAVLTree(tree1);
  //you need to create the text file file1.txt
  // to store a set of items without duplicate items
  tree2=CreateAVLTree("file1.txt"); 
  PrintAVLTree(tree2);
  tree3=CloneAVLTree(tree2);
- print2D(tree3->root);
  PrintAVLTree(tree3);
  FreeAVLTree(tree2);
  FreeAVLTree(tree3);
@@ -703,8 +675,6 @@ int main(){ int i,j;
  tree7=AVLTreesIntersection(tree5, tree6);
  tree8=AVLTreesUnion(tree5,tree6);
  PrintAVLTree(tree7);
- print2D(tree7->root);
  PrintAVLTree(tree8);
- print2D(tree8->root);
  	return 0; 
 }
